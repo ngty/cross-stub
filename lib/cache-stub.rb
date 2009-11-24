@@ -16,17 +16,27 @@ module CacheStub
       end
     end
 
-    def apply(klass, args)
+    def apply(klass, args, &blk)
       update do |old_cache|
-        if !args.first.is_a?(Hash)
-          args.inject(old_cache) {|cache, method| create_stub(klass, cache, method, nil) }
-        else
-          args[0].inject(old_cache) {|cache, args| create_stub(klass, cache, args[0], args[1]) }
-        end
+        new_cache =
+          if args[0].is_a?(Hash)
+            args[0].inject(old_cache) {|cache, args| create_stub(klass, cache, args[0], args[1]) }
+          elsif !args.empty?
+            args.inject(old_cache) {|cache, method| create_stub(klass, cache, method, nil) }
+          else
+            old_cache
+          end
+        block_given? ? create_stub_from_block(klass, new_cache, &blk) : new_cache
       end
     end
 
     private
+
+      class Minimalist
+        alias_method :__instance_eval, :instance_eval
+        alias_method :__methods, :methods
+        instance_methods.each {|m| undef_method m unless (m =~ /^__/) }
+      end
 
       attr_reader :options
 
@@ -60,14 +70,26 @@ module CacheStub
       end
 
       def create_stub(klass, cache, method, value)
-        mklass = metaclass(klass)
-        if !cache.has_key?("#{klass}:#{method}")
-          already_has_method = klass.respond_to?(method)
-          cache["#{klass}:#{method}"] = already_has_method
-          mklass.send(:alias_method, "before_stub_#{method}".to_sym, method) if already_has_method
-        end
-        mklass.send(:define_method, method) { value }
+        cache["#{klass}:#{method}"] = create_alias_method(klass, cache, method)
+        metaclass(klass).send(:define_method, method) { value }
         cache
+      end
+
+      def create_stub_from_block(klass, cache, &blk)
+        (tmp = Minimalist.new).__instance_eval(&blk)
+        (tmp.__methods - Minimalist.new.__methods).each do |method|
+          cache["#{klass}:#{method}"] = create_alias_method(klass, cache, method)
+        end
+        klass.instance_eval(&blk)
+        cache
+      end
+
+      def create_alias_method(klass, cache, method)
+        if !cache.has_key?(key = "#{klass}:#{method}")
+          (cache[key] = klass.respond_to?(method)) &&
+            metaclass(klass).send(:alias_method, "before_stub_#{method}".to_sym, method)
+        end
+        cache[key]
       end
 
       def metaclass(klass)
@@ -77,8 +99,8 @@ module CacheStub
   end
 
   module ClassMethods
-    def cache_stub(*args)
-      CacheStub.apply(self, args)
+    def cache_stub(*args, &blk)
+      CacheStub.apply(self, args, &blk)
     end
   end
 
