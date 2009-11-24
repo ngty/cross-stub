@@ -32,10 +32,12 @@ module CacheStub
 
     private
 
-      class Minimalist
+      class BlankObject
         alias_method :__instance_eval, :instance_eval
         alias_method :__methods, :methods
-        instance_methods.each {|m| undef_method m unless (m =~ /^__/) }
+        instance_methods.each do |m|
+          undef_method m unless %w{__instance_eval __methods}.include?(m)
+        end
       end
 
       attr_reader :options
@@ -70,21 +72,21 @@ module CacheStub
       end
 
       def create_stub(klass, cache, method, value)
-        cache["#{klass}:#{method}"] = create_alias_method(klass, cache, method)
+        cache["#{klass}:#{method}"] = has_created_alias_method?(klass, cache, method)
         metaclass(klass).send(:define_method, method) { value }
         cache
       end
 
       def create_stub_from_block(klass, cache, &blk)
-        (tmp = Minimalist.new).__instance_eval(&blk)
-        (tmp.__methods - Minimalist.new.__methods).each do |method|
-          cache["#{klass}:#{method}"] = create_alias_method(klass, cache, method)
+        (tmp = BlankObject.new).__instance_eval(&blk)
+        (tmp.__methods - BlankObject.new.__methods).each do |method|
+          cache["#{klass}:#{method}"] = has_created_alias_method?(klass, cache, method)
         end
         klass.instance_eval(&blk)
         cache
       end
 
-      def create_alias_method(klass, cache, method)
+      def has_created_alias_method?(klass, cache, method)
         if !cache.has_key?(key = "#{klass}:#{method}")
           (cache[key] = klass.respond_to?(method)) &&
             metaclass(klass).send(:alias_method, "before_stub_#{method}".to_sym, method)
