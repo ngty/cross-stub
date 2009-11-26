@@ -33,10 +33,10 @@ module CacheStub
     private
 
       class BlankObject
-        alias_method :__instance_eval, :instance_eval
-        alias_method :__methods, :methods
+        alias_method :__instance_eval__, :instance_eval
+        alias_method :__methods__, :methods
         instance_methods.each do |m|
-          undef_method m unless %w{__instance_eval __methods}.include?(m)
+          undef_method m unless m =~ /^__.*__$/
         end
       end
 
@@ -78,8 +78,8 @@ module CacheStub
       end
 
       def create_stub_from_block(klass, cache, &blk)
-        (tmp = BlankObject.new).__instance_eval(&blk)
-        (tmp.__methods - BlankObject.new.__methods).each do |method|
+        (tmp = BlankObject.new).__instance_eval__(&blk)
+        (tmp.__methods__ - BlankObject.new.__methods__).each do |method|
           cache["#{klass}:#{method}"] = has_created_alias_method?(klass, cache, method)
         end
         klass.instance_eval(&blk)
