@@ -4,25 +4,26 @@ describe 'Creating Stubs' do
 
   behaves_like 'has standard setup'
 
-  # %w{current other}.each do |mode|
-  %w{current}.each do |mode|
+  %w{current other}.each do |mode|
+
+    behaves_like "has #{mode} process setup"
 
     it "should create with hash argument(s) for #{mode} process" do
       AnyClass.cache_stub(:say_hello => 'i say hello', :say_world => 'i say world')
-      AnyClass.say_hello.should.equal 'i say hello'
-      AnyClass.say_world.should.equal 'i say world'
+      @get_value['AnyClass.say_hello'].should.equal 'i say hello'
+      @get_value['AnyClass.say_world'].should.equal 'i say world'
     end
 
     it "should create with symbol argument(s) for #{mode} process" do
       AnyClass.cache_stub(:say_hello)
-      AnyClass.say_hello.should.equal nil
+      @get_value['AnyClass.say_hello'].should.equal nil
     end
 
     it "should create with block with no argument for #{mode} process" do
       AnyClass.cache_stub do
         def say_hello ; 'i say hello' ; end
       end
-      AnyClass.say_hello.should.equal 'i say hello'
+      @get_value['AnyClass.say_hello'].should.equal 'i say hello'
     end
 
     it "should create with symbol & block with no argument for #{mode} process" do
@@ -31,8 +32,8 @@ describe 'Creating Stubs' do
           'i say world'
         end
       end
-      AnyClass.say_hello.should.equal nil
-      AnyClass.say_world.should.equal 'i say world'
+      @get_value['AnyClass.say_hello'].should.equal nil
+      @get_value['AnyClass.say_world'].should.equal 'i say world'
     end
 
     it "should create with hash & block with no argument for #{mode} process" do
@@ -41,8 +42,8 @@ describe 'Creating Stubs' do
           'i say world'
         end
       end
-      AnyClass.say_hello.should.equal 'i say hello'
-      AnyClass.say_world.should.equal 'i say world'
+      @get_value['AnyClass.say_hello'].should.equal 'i say hello'
+      @get_value['AnyClass.say_world'].should.equal 'i say world'
     end
 
 #    it "should create with block that takes argument(s) for #{mode} process" do
@@ -54,7 +55,7 @@ describe 'Creating Stubs' do
 #      # end
 #      # AnyClass.say_hello.should.equal 'i say 3 hellos'
 #    end
-#
+# 
 #    it "should create with hash & block that takes argument(s) for #{mode} process" do
 #      # a, b = 1, 2
 #      # AnyClass.cache_stub(:say_world => 'i say world') do |a, b|
@@ -67,4 +68,5 @@ describe 'Creating Stubs' do
 #    end
 
   end
+
 end
