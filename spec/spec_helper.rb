@@ -10,10 +10,12 @@ Bacon.summary_on_exit
 
 shared 'has standard setup' do
   before do
-    CacheStub.setup(:file => '/tmp/cachemock.cache')
+    EchoServer.start
+    CacheStub.setup(:file => '/tmp/cachemock.cache', :pid => EchoServer.pid)
   end
   after do
     CacheStub.clear
+    EchoServer.stop
   end
 end
 
@@ -28,14 +30,10 @@ end
 
 shared 'has other process setup' do
   before do
-    EchoServer.start
     @get_value = lambda do |klass_and_method|
       (value = EchoClient.get(klass_and_method)) !~ /^undefined method/ ? value :
         Object.we_just_wanna_trigger_a_no_method_error_with_this_very_long_and_weird_method!
     end
-  end
-  after do
-    EchoServer.stop
   end
 end
 

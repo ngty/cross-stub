@@ -11,6 +11,8 @@ begin
     gem.homepage = "http://github.com/ngty/cache-stub"
     gem.authors = ["NgTzeYang"]
     gem.add_development_dependency "bacon", ">= 0"
+    gem.add_dependency "ParseTree", "= 3.0.4"
+    gem.add_dependency "ruby2ruby", "= 1.2.4"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError

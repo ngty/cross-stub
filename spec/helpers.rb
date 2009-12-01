@@ -75,11 +75,7 @@ module EchoServer
     module EM
       def receive_data(klass_and_method)
         klass, method = klass_and_method.split('.')
-        begin
-          send_data(Object.const_get(klass).send(method))
-        rescue
-          send_data($!)
-        end
+        send_data(Object.const_get(klass).send(method)) rescue send_data($!)
       end
     end
 

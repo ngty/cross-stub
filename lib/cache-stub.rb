@@ -1,102 +1,41 @@
+require 'rubygems'
+require 'parse_tree'
+require 'ruby2ruby'
+require 'cache-stub/stub_helpers'
+require 'cache-stub/setup_helpers'
+require 'cache-stub/cache_helpers'
+require 'cache-stub/pseudo_class'
+
 module CacheStub
 
   class Error < Exception ; end
+  class NotImplementedError < Error ; end
   class CannotStubInstanceError < Error ; end
 
   class << self
 
+    include CacheHelpers
+    include SetupHelpers
+    include StubHelpers
+
+    attr_reader :options
+
     def setup(opts)
       @options = opts
-      File.open(options[:file], 'w') {|f| Marshal.dump({}, f) }
+      current_process? ? setup_for_current_process : setup_for_other_process
     end
 
     def clear
-      if File.exists?(options[:file])
-        unapply ; delete
-      end
+      current_process? ? clear_stubs_for_current_process : clear_stubs_for_other_process
     end
 
-    def apply(klass, args, &blk)
-      update do |old_cache|
-        new_cache =
-          if args[0].is_a?(Hash)
-            args[0].inject(old_cache) {|cache, args| create_stub(klass, cache, args[0], args[1]) }
-          elsif !args.empty?
-            args.inject(old_cache) {|cache, method| create_stub(klass, cache, method, nil) }
-          else
-            old_cache
-          end
-        block_given? ? create_stub_from_block(klass, new_cache, &blk) : new_cache
-      end
+    def apply(*args, &blk)
+      current_process? ? apply_stubs_for_current_process(*args, &blk) : apply_stubs_for_other_process
     end
 
-    private
-
-      class BlankObject
-        alias_method :__instance_eval__, :instance_eval
-        alias_method :__methods__, :methods
-        instance_methods.each do |m|
-          undef_method m unless m =~ /^__.*__$/
-        end
-      end
-
-      attr_reader :options
-
-      def update(&blk)
-        dump(yield(load))
-      end
-
-      def delete
-        File.delete(options[:file])
-      end
-
-      def load
-        File.open(options[:file],'r') {|f| Marshal.load(f) }
-      end
-
-      def dump(data)
-        File.open(options[:file],'w') {|f| Marshal.dump(data, f) }
-      end
-
-      def unapply
-        load.each do |key, has_method_before_stubbing|
-          klass, method = key.split(':').map(&:to_sym)
-          mklass = metaclass(const_get(klass))
-          if has_method_before_stubbing
-            before_stub_method = mklass.instance_method("before_stub_#{method}".to_sym)
-            mklass.send(:define_method, method, before_stub_method)
-          else
-            mklass.send(:remove_method, method)
-          end
-        end
-      end
-
-      def create_stub(klass, cache, method, value)
-        cache["#{klass}:#{method}"] = has_created_alias_method?(klass, cache, method)
-        metaclass(klass).send(:define_method, method) { value }
-        cache
-      end
-
-      def create_stub_from_block(klass, cache, &blk)
-        (tmp = BlankObject.new).__instance_eval__(&blk)
-        (tmp.__methods__ - BlankObject.new.__methods__).each do |method|
-          cache["#{klass}:#{method}"] = has_created_alias_method?(klass, cache, method)
-        end
-        klass.instance_eval(&blk)
-        cache
-      end
-
-      def has_created_alias_method?(klass, cache, method)
-        if !cache.has_key?(key = "#{klass}:#{method}")
-          (cache[key] = klass.respond_to?(method)) &&
-            metaclass(klass).send(:alias_method, "before_stub_#{method}".to_sym, method)
-        end
-        cache[key]
-      end
-
-      def metaclass(klass)
-        (class << klass ; self ; end)
-      end
+    def current_process?
+      !options[:pid].nil?
+    end
 
   end
 
