@@ -1,6 +1,9 @@
 require 'rubygems'
 require 'eventmachine'
 
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'cache-stub'
+
 class AnyClass
   def self.say_world
     'u say world'
@@ -25,7 +28,7 @@ module EchoClient
         (EventMachine::connect(address, port, EM)).
           execute(klass_and_method) {|data| self.result = data }
       end
-      self.result
+      (self.result == '<NIL>') ? nil : self.result
     end
 
   end
@@ -74,8 +77,10 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
+        CacheStub.refresh(:file => '/tmp/cachemock.cache')
         klass, method = klass_and_method.split('.')
-        send_data(Object.const_get(klass).send(method)) rescue send_data($!)
+        value = Object.const_get(klass).send(method) rescue $!
+        send_data(value.nil? ? '<NIL>' : value)
       end
     end
 

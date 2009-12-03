@@ -31,7 +31,7 @@ module CacheStub
     end
 
     def remove_method(method)
-      @metaclass.send(:remove_method, method)
+      @metaclass.send(:remove_method, method) rescue nil
     end
 
     def replace_methods(&blk)

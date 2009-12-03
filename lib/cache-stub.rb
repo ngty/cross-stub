@@ -9,7 +9,6 @@ require 'cache-stub/pseudo_class'
 module CacheStub
 
   class Error < Exception ; end
-  class NotImplementedError < Error ; end
   class CannotStubInstanceError < Error ; end
 
   class << self
@@ -22,19 +21,20 @@ module CacheStub
 
     def setup(opts)
       @options = opts
-      current_process? ? setup_for_current_process : setup_for_other_process
+      setup_for_current_process
     end
 
     def clear
-      current_process? ? clear_stubs_for_current_process : clear_stubs_for_other_process
+      clear_stubs_for_current_process
     end
 
     def apply(*args, &blk)
-      current_process? ? apply_stubs_for_current_process(*args, &blk) : apply_stubs_for_other_process
+      apply_stubs_for_current_process(*args, &blk)
     end
 
-    def current_process?
-      !options[:pid].nil?
+    def refresh(opts)
+      @options = opts
+      apply_or_unapply_stubs_for_other_process
     end
 
   end
@@ -47,7 +47,7 @@ module CacheStub
 
   module InstanceMethods
     def cache_stub(*args)
-      raise CacheStub::CannotStubInstanceError
+      raise CannotStubInstanceError
     end
   end
 

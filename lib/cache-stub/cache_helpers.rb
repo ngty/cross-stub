@@ -4,20 +4,38 @@ module CacheStub
 
   module CacheHelpers
 
+    def setup_cache
+      File.open(cache_file, 'w') {|f| Marshal.dump({}, f) }
+    end
+
     def update_cache(&blk)
       dump_cache(yield(load_cache))
     end
 
     def delete_cache
-      File.delete(options[:file])
+      File.rename(cache_file, backup_cache_file) if File.exists?(cache_file)
     end
 
     def load_cache
-      File.open(options[:file],'r') {|f| Marshal.load(f) }
+      File.open(cache_file,'r') {|f| Marshal.load(f) }
+    end
+
+    def load_backup_cache
+      cache = File.open(backup_cache_file, 'r') {|f| Marshal.load(f) } rescue {}
+      File.delete(backup_cache_file)
+      cache
     end
 
     def dump_cache(data)
-      File.open(options[:file],'w') {|f| Marshal.dump(data, f) }
+      File.open(cache_file,'w') {|f| Marshal.dump(data, f) }
+    end
+
+    def backup_cache_file
+      %\#{options[:file]}.bak\
+    end
+
+    def cache_file
+      options[:file]
     end
 
   end
