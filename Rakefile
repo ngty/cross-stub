@@ -4,11 +4,11 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "cache-stub"
+    gem.name = "cross-stub"
     gem.summary = %Q{TODO: one-line summary of your gem}
     gem.description = %Q{TODO: longer description of your gem}
     gem.email = "ngty77@gmail.com"
-    gem.homepage = "http://github.com/ngty/cache-stub"
+    gem.homepage = "http://github.com/ngty/cross-stub"
     gem.authors = ["NgTzeYang"]
     gem.add_development_dependency "bacon", ">= 0"
     gem.add_dependency "ParseTree", "= 3.0.4"
@@ -48,7 +48,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "cache-stub #{version}"
+  rdoc.title = "cross-stub #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

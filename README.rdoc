@@ -1,4 +1,4 @@
-= cache-stub
+= cross-stub
 
 Description goes here.
 

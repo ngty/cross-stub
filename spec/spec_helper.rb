@@ -8,10 +8,10 @@ Bacon.summary_on_exit
 
 shared 'has standard setup' do
   before do
-    CacheStub.setup(:file => '/tmp/cachemock.cache')
+    CrossStub.setup(:file => '/tmp/crossstub.cache')
   end
   after do
-    CacheStub.clear
+    CrossStub.clear
   end
 end
 

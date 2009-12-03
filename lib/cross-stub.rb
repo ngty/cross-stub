@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'parse_tree'
 require 'ruby2ruby'
-require 'cache-stub/stub_helpers'
-require 'cache-stub/setup_helpers'
-require 'cache-stub/cache_helpers'
-require 'cache-stub/pseudo_class'
+require 'cross-stub/stub_helpers'
+require 'cross-stub/setup_helpers'
+require 'cross-stub/cache_helpers'
+require 'cross-stub/pseudo_class'
 
-module CacheStub
+module CrossStub
 
   class Error < Exception ; end
   class CannotStubInstanceError < Error ; end
@@ -40,18 +40,18 @@ module CacheStub
   end
 
   module ClassMethods
-    def cache_stub(*args, &blk)
-      CacheStub.apply(self, args, &blk)
+    def xstub(*args, &blk)
+      CrossStub.apply(self, args, &blk)
     end
   end
 
   module InstanceMethods
-    def cache_stub(*args)
+    def xstub(*args)
       raise CannotStubInstanceError
     end
   end
 
 end
 
-Object.send(:extend, CacheStub::ClassMethods)
-Object.send(:include, CacheStub::InstanceMethods)
+Object.send(:extend, CrossStub::ClassMethods)
+Object.send(:include, CrossStub::InstanceMethods)

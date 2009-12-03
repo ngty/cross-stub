@@ -2,7 +2,7 @@ require 'rubygems'
 require 'eventmachine'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'cache-stub'
+require 'cross-stub'
 
 class AnyClass
   def self.say_world
@@ -77,7 +77,7 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
-        CacheStub.refresh(:file => '/tmp/cachemock.cache')
+        CrossStub.refresh(:file => '/tmp/crossstub.cache')
         klass, method = klass_and_method.split('.')
         value = Object.const_get(klass).send(method) rescue $!
         send_data(value.nil? ? '<NIL>' : value)

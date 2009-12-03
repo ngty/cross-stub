@@ -10,49 +10,49 @@ describe 'Clearing Stubs' do
 
     it "should clear hash generated stub and return original value for #{mode} process" do
       original_value = AnyClass.say_world
-      AnyClass.cache_stub(:say_world => 'i say world')
-      CacheStub.clear
+      AnyClass.xstub(:say_world => 'i say world')
+      CrossStub.clear
       @get_value['AnyClass.say_world'].should.equal original_value
     end
 
     it "should clear hash generated stub and raise NoMethodError for #{mode} process" do
       should.raise(NoMethodError) do
-        AnyClass.cache_stub(:say_hello => 'i say hello')
-        CacheStub.clear
+        AnyClass.xstub(:say_hello => 'i say hello')
+        CrossStub.clear
         @get_value['AnyClass.say_hello']
       end
     end
 
     it "should clear symbol generated stub and return original value for #{mode} process" do
       original_value = AnyClass.say_world
-      AnyClass.cache_stub(:say_world)
-      CacheStub.clear
+      AnyClass.xstub(:say_world)
+      CrossStub.clear
       @get_value['AnyClass.say_world'].should.equal original_value
     end
 
     it "should clear symbol generated stub and raise NoMethodError for #{mode} process" do
       should.raise(NoMethodError) do
-        AnyClass.cache_stub(:say_hello)
-        CacheStub.clear
+        AnyClass.xstub(:say_hello)
+        CrossStub.clear
         @get_value['AnyClass.say_hello']
       end
     end
 
     it "should clear block generated stub and return original value for #{mode} process" do
       original_value = AnyClass.say_world
-      AnyClass.cache_stub do
+      AnyClass.xstub do
         def say_world ; 'i say world' ; end
       end
-      CacheStub.clear
+      CrossStub.clear
       @get_value['AnyClass.say_world'].should.equal original_value
     end
 
     it "should clear block generated stub and raise NoMethodError for #{mode} process" do
       should.raise(NoMethodError) do
-        AnyClass.cache_stub do
+        AnyClass.xstub do
           def say_hello ; 'i say hello' ; end
         end
-        CacheStub.clear
+        CrossStub.clear
         @get_value['AnyClass.say_hello']
       end
     end
