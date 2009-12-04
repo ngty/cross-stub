@@ -57,6 +57,42 @@ describe 'Clearing Stubs' do
       end
     end
 
+    it "should always clear previously generated stub for #{mode} process" do
+      original_value = AnyClass.say_world
+
+      # Stub an existing method
+      AnyClass.xstub(:say_world => 'i say world')
+      @get_value['AnyClass.say_world']
+
+      # Clear stubs without refreshing another process
+      CrossStub.clear
+      CrossStub.setup(:file => $cache_file)
+
+      # Stub a non-existing method
+      AnyClass.xstub(:say_hello => 'i say hello')
+      @get_value['AnyClass.say_hello']
+
+      # Make sure existing method returns to original method
+      @get_value['AnyClass.say_world'].should.equal original_value
+    end
+
+    it "should always clear previously generated stub and raise NoMethodError for #{mode} process" do
+      # Stub a non-existing method
+      AnyClass.xstub(:say_hello => 'i say hello')
+      @get_value['AnyClass.say_hello']
+
+      # Clear stubs without refreshing another process
+      CrossStub.clear
+      CrossStub.setup(:file => $cache_file)
+
+      # Stub an existing method
+      AnyClass.xstub(:say_world => 'i say world')
+      @get_value['AnyClass.say_world']
+
+      # Make sure accessing non-existing method throws error
+      should.raise(NoMethodError) { @get_value['AnyClass.say_hello'] }
+    end
+
   end
 
 end

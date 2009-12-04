@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'eventmachine'
 
+$cache_file = '/tmp/crossstub.cache'
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'cross-stub'
 
@@ -77,7 +79,7 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
-        CrossStub.refresh(:file => '/tmp/crossstub.cache')
+        CrossStub.refresh(:file => $cache_file)
         klass, method = klass_and_method.split('.')
         value = Object.const_get(klass).send(method) rescue $!
         send_data(value.nil? ? '<NIL>' : value)

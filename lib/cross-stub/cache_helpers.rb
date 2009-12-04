@@ -13,7 +13,10 @@ module CrossStub
     end
 
     def delete_cache
-      File.rename(cache_file, backup_cache_file) if File.exists?(cache_file)
+      if File.exists?(cache_file)
+        File.exists?(backup_cache_file) ?
+          File.delete(cache_file) : File.rename(cache_file, backup_cache_file)
+      end
     end
 
     def load_cache
@@ -21,8 +24,11 @@ module CrossStub
     end
 
     def load_backup_cache
-      cache = File.open(backup_cache_file, 'r') {|f| Marshal.load(f) } rescue {}
-      File.delete(backup_cache_file)
+      cache = {}
+      if File.exists?(backup_cache_file)
+        cache = File.open(backup_cache_file, 'r') {|f| Marshal.load(f) }
+        File.delete(backup_cache_file)
+      end
       cache
     end
 

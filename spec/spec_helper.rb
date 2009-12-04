@@ -8,7 +8,7 @@ Bacon.summary_on_exit
 
 shared 'has standard setup' do
   before do
-    CrossStub.setup(:file => '/tmp/crossstub.cache')
+    CrossStub.setup(:file => $cache_file)
   end
   after do
     CrossStub.clear

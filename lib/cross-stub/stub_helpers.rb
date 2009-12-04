@@ -22,14 +22,13 @@ module CrossStub
     end
 
     def apply_or_unapply_stubs_for_other_process
-      begin
+      lambda {
+        unapply_stubs(load_backup_cache)
         load_cache.each do |klass, hash|
           pk = PseudoClass.new(klass)
           hash.each {|method, codes| pk.replace_method(method, codes[:after]) }
         end
-      rescue
-        unapply_stubs(load_backup_cache)
-      end
+      }[] rescue nil
     end
 
     def unapply_stubs(cache=nil)

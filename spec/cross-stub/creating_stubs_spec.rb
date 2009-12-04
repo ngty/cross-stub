@@ -46,6 +46,23 @@ describe 'Creating Stubs' do
       @get_value['AnyClass.say_world'].should.equal 'i say world'
     end
 
+    it "should always create the most recent for #{mode} process" do
+      found, expected = [], ['i say hello', 'i say something else', 'i say something else again']
+      stub_and_get_value = lambda do |value|
+        AnyClass.xstub(:say_hello => value)
+        @get_value['AnyClass.say_hello']
+      end
+
+      found << stub_and_get_value[expected[0]]
+      found << stub_and_get_value[expected[1]]
+
+      CrossStub.clear
+      CrossStub.setup(:file => $cache_file)
+
+      found << stub_and_get_value[expected[2]]
+      found.should.equal expected
+    end
+
 #    it "should create with block that takes argument(s) for #{mode} process" do
 #      # a, b = 1, 2
 #      # AnyClass.xstub do |a, b|
