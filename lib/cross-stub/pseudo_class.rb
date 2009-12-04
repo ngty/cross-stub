@@ -24,8 +24,8 @@ module CrossStub
 
     def replace_method(method, value_or_code)
       old_method_code = method_code(method)
-      new_method_code = "#{value_or_code}" =~ /^def / ?
-        value_or_code : %\def #{method}; #{value_or_code.inspect}; end\
+      new_method_code = "#{value_or_code}" =~ /^def / ?  value_or_code :
+        %\def #{method}; Marshal.load(%|#{Marshal.dump(value_or_code)}|) ; end\
       @klass.instance_eval(new_method_code)
       old_method_code
     end
