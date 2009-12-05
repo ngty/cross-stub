@@ -80,8 +80,13 @@ module EchoServer
     module EM
       def receive_data(klass_and_method)
         CrossStub.refresh(:file => $cache_file)
-        klass, method = klass_and_method.split('.')
-        value = Object.const_get(klass).send(method) rescue $!
+        klass, method, *args = klass_and_method.split('.')
+        value =
+          if args.empty?
+            Object.const_get(klass).send(method) rescue $!
+          else
+            Object.const_get(klass).send(method, *args) rescue $!
+          end
         send_data(value.nil? ? '<NIL>' : value)
       end
     end

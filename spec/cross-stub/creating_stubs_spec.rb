@@ -63,6 +63,15 @@ describe 'Creating Stubs' do
       found.should.equal expected
     end
 
+    it "should create stub with dependency on other stub for #{mode} process" do
+      AnyClass.xstub(:something => 'hello') do
+        def do_action(who, action)
+          %\#{who} #{action} #{something}\
+        end
+      end
+      @get_value['AnyClass.do_action.i.say'].should.equal 'i say hello'
+    end
+
 #    it "should create with block that takes argument(s) for #{mode} process" do
 #      # a, b = 1, 2
 #      # AnyClass.xstub do |a, b|
