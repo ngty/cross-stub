@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'eventmachine'
 
-$cache_file = '/tmp/crossstub.cache'
+$cache_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'stubbing.cache')
+$log_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'echoserver.log')
+$sleep_time = 1.5  # may need to increase this depending on ur machine's prowess
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'cross-stub'
@@ -63,7 +65,7 @@ module EchoServer
     def start(other_process=false)
       unless other_process
         @process = IO.popen("ruby #{__FILE__}")
-        sleep 1
+        sleep $sleep_time
       else
         EventMachine::run { EventMachine::start_server(ADDRESS, PORT, EM) }
       end
@@ -79,18 +81,34 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
+        $logger << "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}\n"
         CrossStub.refresh(:file => $cache_file)
+        $logger << "(2) EchoServer::EM#receive_data ... completes stubs refresh\n"
         klass, method, *args = klass_and_method.split('.')
+        $logger << "(3) EchoServer::EM#receive_data ... parses arguments to:\n"
+        $logger << "    * klass  ... #{klass}\n"
+        $logger << "    * method ... #{method}\n"
+        $logger << "    * args   ... #{args.inspect}\n"
         value =
           if args.empty?
             Object.const_get(klass).send(method) rescue $!
           else
             Object.const_get(klass).send(method, *args) rescue $!
           end
+        $logger << "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}\n"
         send_data(value.nil? ? '<NIL>' : value)
+        $logger << "(5) EchoServer::EM#receive_data ... end\n"
       end
     end
 
 end
 
-EchoServer.start(true) if ($0 == __FILE__)
+if $0 == __FILE__
+  begin
+    require 'logger'
+    $logger = Logger.new($log_file)
+    EchoServer.start(true)
+  ensure
+    $logger.close
+  end
+end
