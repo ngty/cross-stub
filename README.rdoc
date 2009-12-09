@@ -14,10 +14,22 @@ It's hosted on gemcutter.org.
 
 == Setting Up
 
-If you are using rails, you are in luck:
+#1. If you are using rails, you are in luck:
 
   $ ./script/generate cucumber
   $ ./script/generate cross_stub
+
+#2. Even if you are using something else, no worries:
+
+  # In the test setup method:
+  CrossStub.setup :file => <CACHE_FILE_PATH>
+
+  # In the test teardown method:
+  CrossStub.clear
+
+  # Find an entry point in your target application, eg. in a server, the
+  # point where all request handling starts:
+  CrossStub.refresh :file => <CACHE_FILE_PATH>
 
 == Using It
 
@@ -70,16 +82,20 @@ The above fails as a result of undefined variable/method 'something', to workaro
 
 == Caveats
 
-1. Cross-stub uses ruby's Marshal class to dump & load the stubs, thus it has the same limitations as Marshal
+#1. Cross-stub uses ruby's Marshal class to dump & load the stubs, thus it has the same limitations as Marshal
 
-2. Cross-stub only supports stubbing of class methods, since it makes no sense to do cross process stubbing of instances
+#2. Cross-stub only supports stubbing of class methods, since it makes no sense to do cross process stubbing of instances
+
+== TODO(s)
+
+#1. We can possibly use Hijack (http://github.com/ileitch/hijack) within the current test process to trigger refreshing of stubs in the other process, thus using cross-stub no longer requires changing of any existing application code to insert CrossStub.refresh(...). This has in fact been our original intended strategy, however, we have not been able to do so as Hijack currently hangs on starting up on our development machines.
 
 == Contacts
 
 Written 2009 by:
 
-1. NgTzeYang, contact ngty77[at]gmail.com or http://github.com/ngty
+#1. NgTzeYang, contact ngty77[at]gmail.com or http://github.com/ngty
 
-2. WongLiangZan, contact liangzan[at]gmail.com or http://github.com/liangzan
+#2. WongLiangZan, contact liangzan[at]gmail.com or http://github.com/liangzan
 
 Released under the MIT license
