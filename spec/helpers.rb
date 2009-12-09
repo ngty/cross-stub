@@ -81,23 +81,23 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
-        $logger << "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}\n"
+        log "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}"
         CrossStub.refresh(:file => $cache_file)
-        $logger << "(2) EchoServer::EM#receive_data ... completes stubs refresh\n"
+        log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
         klass, method, *args = klass_and_method.split('.')
-        $logger << "(3) EchoServer::EM#receive_data ... parses arguments to:\n"
-        $logger << "    * klass  ... #{klass}\n"
-        $logger << "    * method ... #{method}\n"
-        $logger << "    * args   ... #{args.inspect}\n"
-        value =
-          if args.empty?
-            Object.const_get(klass).send(method) rescue $!
-          else
-            Object.const_get(klass).send(method, *args) rescue $!
-          end
-        $logger << "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}\n"
+        log "(3) EchoServer::EM#receive_data ... parses arguments to:",
+            "    * klass  ... #{klass}",
+            "    * method ... #{method}",
+            "    * args   ... #{args.inspect}"
+        value = args.empty? ? Object.const_get(klass).send(method) :
+          Object.const_get(klass).send(method, *args) rescue $!
+        log "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}"
         send_data(value.nil? ? '<NIL>' : value)
-        $logger << "(5) EchoServer::EM#receive_data ... end\n"
+        log "(5) EchoServer::EM#receive_data ... end"
+      end
+
+      def log(*msg)
+        $logger << [msg, ""].flatten.join("\n")
       end
     end
 
