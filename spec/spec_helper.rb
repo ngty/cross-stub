@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bacon'
+require 'mocha'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'helpers'
@@ -27,14 +28,14 @@ end
 
 shared 'has other process setup' do
   before do
-    EchoServer.start
+    EchoServer.start unless ENV['ECHO_SERVER'] == 'false'
     @get_value = lambda do |klass_and_method_and_args|
       (value = EchoClient.get(klass_and_method_and_args)) !~ /^undefined method/ ? value :
         Object.we_just_wanna_trigger_a_no_method_error_with_this_very_long_and_weird_method!
     end
   end
   after do
-    EchoServer.stop
+    EchoServer.stop unless ENV['ECHO_SERVER'] == 'false'
   end
 end
 
