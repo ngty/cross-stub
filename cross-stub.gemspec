@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cross-stub}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NgTzeYang"]
-  s.date = %q{2009-12-07}
+  s.date = %q{2009-12-16}
   s.description = %q{}
   s.email = %q{ngty77@gmail.com}
   s.extra_rdoc_files = [
@@ -37,7 +37,8 @@ Gem::Specification.new do |s|
      "spec/cross-stub/creating_stubs_spec.rb",
      "spec/cross-stub/stubbing_error_spec.rb",
      "spec/helpers.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "tmp/.dummy"
   ]
   s.homepage = %q{http://github.com/ngty/cross-stub}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -46,6 +47,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Simple cross process stubbing}
   s.test_files = [
     "spec/spec_helper.rb",
+     "spec/cross-stub/getting_along_with_mocha_spec.rb",
      "spec/cross-stub/clearing_stubs_spec.rb",
      "spec/cross-stub/stubbing_error_spec.rb",
      "spec/cross-stub/creating_stubs_spec.rb",
@@ -57,16 +59,19 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<bacon>, [">= 0"])
+      s.add_development_dependency(%q<bacon>, [">= 0.0.0"])
+      s.add_development_dependency(%q<eventmachine>, [">= 0.0.0"])
       s.add_runtime_dependency(%q<ParseTree>, ["= 3.0.4"])
       s.add_runtime_dependency(%q<ruby2ruby>, ["= 1.2.4"])
     else
-      s.add_dependency(%q<bacon>, [">= 0"])
+      s.add_dependency(%q<bacon>, [">= 0.0.0"])
+      s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
       s.add_dependency(%q<ParseTree>, ["= 3.0.4"])
       s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
     end
   else
-    s.add_dependency(%q<bacon>, [">= 0"])
+    s.add_dependency(%q<bacon>, [">= 0.0.0"])
+    s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
     s.add_dependency(%q<ParseTree>, ["= 3.0.4"])
     s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
   end
