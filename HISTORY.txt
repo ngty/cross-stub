@@ -1,0 +1,15 @@
+=== 0.1.2 2009-12-16
+
+= Bugfixes
+* fixed failure in stubbing & unstubbing methods not implemented in ruby
+
+=== 0.1.1 2009-12-07
+
+= Bugfixes
+* fixed rails generator by adding a matching 'After' block for clearing cache
+  in current process
+
+=== 0.1.0 2009-12-05
+
+First gem release!
+
