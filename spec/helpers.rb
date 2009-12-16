@@ -30,9 +30,9 @@ module EchoClient
       address, port = EchoServer::ADDRESS, EchoServer::PORT
       EventMachine::run do
         (EventMachine::connect(address, port, EM)).
-          execute(klass_and_method) {|data| self.result = data }
+          execute(klass_and_method) {|data| self.result = Marshal.load(data) }
       end
-      (self.result == '<NIL>') ? nil : self.result
+      self.result
     end
 
   end
@@ -90,9 +90,9 @@ module EchoServer
             "    * method ... #{method}",
             "    * args   ... #{args.inspect}"
         value = args.empty? ? Object.const_get(klass).send(method) :
-          Object.const_get(klass).send(method, *args) rescue $!
+          Object.const_get(klass).send(method, *args) rescue $!.message
         log "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}"
-        send_data(value.nil? ? '<NIL>' : value)
+        send_data(Marshal.dump(value))
         log "(5) EchoServer::EM#receive_data ... end"
       end
 
