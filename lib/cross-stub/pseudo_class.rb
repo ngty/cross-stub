@@ -23,11 +23,27 @@ module CrossStub
     end
 
     def replace_method(method, value_or_code)
-      old_method_code = method_code(method)
-      new_method_code = "#{value_or_code}" =~ /^def / ?  value_or_code :
-        %\def #{method}; Marshal.load(%|#{Marshal.dump(value_or_code)}|) ; end\
-      @klass.instance_eval(new_method_code)
-      old_method_code
+      status = backup_method(method)
+      @klass.instance_eval \
+        "#{value_or_code}" =~ /^def / ? value_or_code :
+          %\def #{method}; Marshal.load(%|#{Marshal.dump(value_or_code)}|) ; end\
+      status
+    end
+
+    def revert_method(method)
+      new_name = before_stubbing_method_name(method)
+      @metaclass.instance_eval("alias_method :#{method}, :#{new_name}") rescue nil
+      remove_method(new_name)
+    end
+
+    def backup_method(method)
+      if @klass.respond_to?(method)
+        !@klass.respond_to?(new_name = before_stubbing_method_name(method)) &&
+          @metaclass.instance_eval("alias_method :#{new_name}, :#{method}")
+        true
+      else
+        false
+      end
     end
 
     def remove_method(method)
@@ -37,11 +53,15 @@ module CrossStub
     def replace_methods(&blk)
       (tmp = BlankObject.new).__instance_eval__(&blk)
       methods_in_block = tmp.__methods__ - BlankObject.new.__methods__
-      original_method_codes = methods_in_block.inject({}) do |memo, method|
-        memo.merge(method => method_code(method))
+      is_method_implemented_flags = methods_in_block.inject({}) do |memo, method|
+        memo.merge(method => backup_method(method))
       end
       @klass.instance_eval(&blk)
-      original_method_codes
+      is_method_implemented_flags
+    end
+
+    def before_stubbing_method_name(method)
+      :"__#{method}_before_xstubbing"
     end
 
   end

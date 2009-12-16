@@ -93,6 +93,14 @@ describe 'Clearing Stubs' do
       should.raise(NoMethodError) { @get_value['AnyClass.say_hello'] }
     end
 
+    it "should clear for method not implemented in ruby and return original value for #{mode} process" do
+      Time.xstub(:now => 'abc')
+      CrossStub.clear
+      value = nil
+      should.not.raise(NoMethodError) { value = @get_value['Time.now'] }
+      value.should.not.equal 'abc'
+    end
+
   end
 
 end

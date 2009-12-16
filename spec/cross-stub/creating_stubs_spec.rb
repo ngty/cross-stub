@@ -72,6 +72,12 @@ describe 'Creating Stubs' do
       @get_value['AnyClass.do_action.i.say'].should.equal 'i say hello'
     end
 
+    it "should create for method not implemented in ruby for #{mode} process" do
+      now = Time.now - 365*60*60*24
+      Time.xstub(:now => now)
+      @get_value['Time.now'].to_s.should.equal now.to_s # other process always return a string
+    end
+
 #    it "should create with block that takes argument(s) for #{mode} process" do
 #      # a, b = 1, 2
 #      # AnyClass.xstub do |a, b|

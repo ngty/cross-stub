@@ -36,7 +36,7 @@ module CrossStub
       cache.each do |klass, hash|
         pk = PseudoClass.new(klass)
         hash.each do |method, codes|
-          codes[:before] ? pk.replace_method(method, codes[:before]) : pk.remove_method(method)
+          codes[:before] ? pk.revert_method(method) : pk.remove_method(method)
         end
       end
     end
@@ -44,8 +44,8 @@ module CrossStub
     def create_stub_from_hash(pk, cache, hash)
       hash.inject(cache) do |cache, args|
         method, value = args
-        original_method_code = pk.replace_method(method, value)
-        cache[method] ||= {:before => original_method_code}
+        is_method_implemented = pk.replace_method(method, value)
+        cache[method] ||= {:before => is_method_implemented}
         cache[method][:after] = pk.method_code(method)
         cache
       end
@@ -53,8 +53,8 @@ module CrossStub
 
     def create_stub_from_block(pk, cache, &blk)
       pk.replace_methods(&blk).inject(cache) do |cache, args|
-        method, original_method_code = args
-        cache[method] ||= {:before => original_method_code}
+        method, is_method_implemented = args
+        cache[method] ||= {:before => is_method_implemented}
         cache[method][:after] = pk.method_code(method)
         cache
       end
