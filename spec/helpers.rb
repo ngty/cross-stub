@@ -14,7 +14,7 @@ class AnyClass
   end
 end
 
-class AnyModule
+module AnyModule
   def self.say_world
     'u say world'
   end

@@ -55,3 +55,4 @@ end
 
 Object.send(:extend, CrossStub::ClassMethods)
 Object.send(:include, CrossStub::InstanceMethods)
+Module.send(:include, CrossStub::ClassMethods)
