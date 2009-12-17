@@ -4,7 +4,7 @@ class CrossStubGenerator < Rails::Generator::Base
     record do |m|
       m.file 'config/initializers/cross-stub.rb', 'config/initializers/cross-stub.rb'
       m.file 'features/support/cross-stub.rb', 'features/support/cross-stub.rb'
-      m.gsub_file 'config/environments/cucumber.rb', /\z/, "config.gem 'cross-stub', :version => '>=0.1.2'\n"
+      m.gsub_file 'config/environments/cucumber.rb', /\z/, "config.gem 'cross-stub', :version => '>=0.1.3'\n"
     end
   end
 
