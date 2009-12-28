@@ -24,8 +24,7 @@ module CrossStub
 
     def replace_method(method, value_or_code)
       status = backup_method(method)
-      @klass.instance_eval \
-        "#{value_or_code}" =~ /^def / ? value_or_code :
+      @klass.instance_eval "#{value_or_code}" =~ /^def / ? value_or_code :
           %\def #{method}; Marshal.load(%|#{Marshal.dump(value_or_code)}|) ; end\
       status
     end
