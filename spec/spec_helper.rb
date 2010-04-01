@@ -20,8 +20,9 @@ shared 'has current process setup' do
   before do
     @get_value = lambda do |klass_and_method_and_args|
       klass, method, *args = klass_and_method_and_args.split('.')
-      args.empty? ? Object.const_get(klass).send(method) :
-        Object.const_get(klass).send(method, *args)
+      konst = klass.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
+      args.empty? ? konst.send(method) :
+        konst.send(method, *args)
     end
   end
 end

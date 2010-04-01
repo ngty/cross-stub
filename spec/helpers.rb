@@ -20,6 +20,14 @@ module AnyModule
   end
 end
 
+module OuterModule
+  module InnerModule
+    def self.say_world
+      'u say world'
+    end
+  end
+end
+
 module EchoClient
 
   class << self
@@ -85,12 +93,13 @@ module EchoServer
         CrossStub.refresh(:file => $cache_file)
         log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
         klass, method, *args = klass_and_method.split('.')
+        konst = klass.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
         log "(3) EchoServer::EM#receive_data ... parses arguments to:",
             "    * klass  ... #{klass}",
             "    * method ... #{method}",
             "    * args   ... #{args.inspect}"
-        value = args.empty? ? Object.const_get(klass).send(method) :
-          Object.const_get(klass).send(method, *args) rescue $!.message
+        value = args.empty? ? konst.send(method) :
+          konst.send(method, *args) rescue $!.message
         log "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}"
         send_data(Marshal.dump(value))
         log "(5) EchoServer::EM#receive_data ... end"
