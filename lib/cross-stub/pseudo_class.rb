@@ -10,8 +10,16 @@ module CrossStub
     end
 
     def initialize(klass)
-      @klass = klass.is_a?(String) ? Object.const_get(klass) : klass
+      @klass = get_class(klass)
       @metaclass = (class << @klass ; self ; end)
+    end
+
+    def get_class(klass)
+      if klass.is_a?(String)
+        klass.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
+      else
+        klass
+      end
     end
 
     def id
