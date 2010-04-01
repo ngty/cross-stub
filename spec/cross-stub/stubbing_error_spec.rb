@@ -16,6 +16,12 @@ describe 'Stubbing Error' do
     }
   end
 
+  it 'should not be raised when stubbing nested module' do
+    should.not.raise(CrossStub::Error) {
+      OuterModule::InnerModule.xstub(:say_hello => 'i say hello')
+    }
+  end
+
   it 'should be raised when stubbing instance' do
     should.raise(CrossStub::CannotStubInstanceError) do
       o = AnyClass.new
