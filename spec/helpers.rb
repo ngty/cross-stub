@@ -12,16 +12,18 @@ class AnyClass
   def self.say_world
     'u say world'
   end
+  class Inner
+    def self.say_world
+      'u say world'
+    end
+  end
 end
 
 module AnyModule
   def self.say_world
     'u say world'
   end
-end
-
-module OuterModule
-  module InnerModule
+  module Inner
     def self.say_world
       'u say world'
     end

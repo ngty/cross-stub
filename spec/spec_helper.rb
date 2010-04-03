@@ -10,6 +10,9 @@ Bacon.summary_on_exit
 shared 'has standard setup' do
   before do
     CrossStub.setup(:file => $cache_file)
+    @get_context = lambda do |klass_or_module|
+      klass_or_module.split(/::/).inject(Object) { |context, name| context.const_get(name) }
+    end
   end
   after do
     CrossStub.clear

@@ -8,56 +8,55 @@ describe 'Creating Stubs' do
 
     behaves_like "has #{mode} process setup"
 
-    %w{AnyClass OuterModule::InnerModule}.each do |konst|
+    %w{AnyClass AnyClass::Inner AnyModule AnyModule::Inner}.each do |klass_or_module|
 
       before do
-        # gets back the nested module via incremental const_gets
-        @klass = konst.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
+        @context = @get_context[klass_or_module]
       end
 
-      it "should create with hash argument(s) for #{konst} class in #{mode} process" do
-        @klass.xstub(:say_hello => 'i say hello', :say_world => 'i say world')
-        @get_value["#{@klass}.say_hello"].should.equal 'i say hello'
-        @get_value["#{@klass}.say_world"].should.equal 'i say world'
+      it "should create with hash argument(s) for #{klass_or_module} class in #{mode} process" do
+        @context.xstub(:say_hello => 'i say hello', :say_world => 'i say world')
+        @get_value["#{@context}.say_hello"].should.equal 'i say hello'
+        @get_value["#{@context}.say_world"].should.equal 'i say world'
       end
 
-      it "should create with symbol argument(s) for #{konst} class in #{mode} process" do
-        @klass.xstub(:say_hello)
-        @get_value["#{@klass}.say_hello"].should.equal nil
+      it "should create with symbol argument(s) for #{klass_or_module} class in #{mode} process" do
+        @context.xstub(:say_hello)
+        @get_value["#{@context}.say_hello"].should.equal nil
       end
 
-      it "should create with block with no argument for #{konst} class in #{mode} process" do
-        @klass.xstub do
+      it "should create with block with no argument for #{klass_or_module} class in #{mode} process" do
+        @context.xstub do
           def say_hello ; 'i say hello' ; end
         end
-        @get_value["#{@klass}.say_hello"].should.equal 'i say hello'
+        @get_value["#{@context}.say_hello"].should.equal 'i say hello'
       end
 
-      it "should create with symbol & block with no argument for #{konst} class in #{mode} process" do
-        @klass.xstub(:say_hello) do
+      it "should create with symbol & block with no argument for #{klass_or_module} class in #{mode} process" do
+        @context.xstub(:say_hello) do
           def say_world
             'i say world'
           end
         end
-        @get_value["#{@klass}.say_hello"].should.equal nil
-        @get_value["#{@klass}.say_world"].should.equal 'i say world'
+        @get_value["#{@context}.say_hello"].should.equal nil
+        @get_value["#{@context}.say_world"].should.equal 'i say world'
       end
 
-      it "should create with hash & block with no argument for #{konst} class in #{mode} process" do
-        @klass.xstub(:say_hello => 'i say hello') do
+      it "should create with hash & block with no argument for #{klass_or_module} class in #{mode} process" do
+        @context.xstub(:say_hello => 'i say hello') do
           def say_world
             'i say world'
           end
         end
-        @get_value["#{@klass}.say_hello"].should.equal 'i say hello'
-        @get_value["#{@klass}.say_world"].should.equal 'i say world'
+        @get_value["#{@context}.say_hello"].should.equal 'i say hello'
+        @get_value["#{@context}.say_world"].should.equal 'i say world'
       end
 
-      it "should always create the most recent for #{konst} class in #{mode} process" do
+      it "should always create the most recent for #{klass_or_module} class in #{mode} process" do
         found, expected = [], ['i say hello', 'i say something else', 'i say something else again']
         stub_and_get_value = lambda do |value|
-          @klass.xstub(:say_hello => value)
-          @get_value["#{@klass}.say_hello"]
+          @context.xstub(:say_hello => value)
+          @get_value["#{@context}.say_hello"]
         end
 
         found << stub_and_get_value[expected[0]]
@@ -70,16 +69,16 @@ describe 'Creating Stubs' do
         found.should.equal expected
       end
 
-      it "should create stub with dependency on other stub for #{konst} class in #{mode} process" do
-        @klass.xstub(:something => 'hello') do
+      it "should create stub with dependency on other stub for #{klass_or_module} class in #{mode} process" do
+        @context.xstub(:something => 'hello') do
           def do_action(who, action)
             %\#{who} #{action} #{something}\
           end
         end
-        @get_value["#{@klass}.do_action.i.say"].should.equal 'i say hello'
+        @get_value["#{@context}.do_action.i.say"].should.equal 'i say hello'
       end
 
-      it "should create for method not implemented in ruby for #{konst} class in #{mode} process" do
+      it "should create for method not implemented in ruby for #{klass_or_module} class in #{mode} process" do
         now = Time.now - 365*60*60*24
         Time.xstub(:now => now)
         @get_value['Time.now'].should.equal now
