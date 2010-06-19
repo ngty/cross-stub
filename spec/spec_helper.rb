@@ -23,9 +23,17 @@ shared 'has current process setup' do
   before do
     @get_value = lambda do |klass_and_method_and_args|
       klass, method, *args = klass_and_method_and_args.split('.')
-      konst = klass.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
-      args.empty? ? konst.send(method) :
-        konst.send(method, *args)
+      konstants = klass.split(/::/)
+      if konstants.last.eql?('new')
+        konstants.slice!(-1)
+        konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
+        args.empty? ? konst::new.send(method) :
+          konst::new.send(method, *args)
+      else
+        konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
+        args.empty? ? konst.send(method) :
+          konst.send(method, *args)
+      end
     end
   end
 end
