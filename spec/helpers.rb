@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'eventmachine'
 
-$cache_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'stubbing.cache')
+$cache_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'stubbing')
 $log_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'echoserver.log')
 $sleep_time = 1.5  # may need to increase this depending on ur machine's prowess
 
@@ -12,11 +12,19 @@ class AnyClass
   def self.say_world
     'u say world'
   end
+
+  def say_hello
+    'u say hello'
+  end
 end
 
 module AnyModule
   def self.say_world
     'u say world'
+  end
+
+  def say_hello
+    'u say hello'
   end
 end
 
@@ -24,6 +32,10 @@ module OuterModule
   module InnerModule
     def self.say_world
       'u say world'
+    end
+
+    def say_hello
+      'u say hello'
     end
   end
 end
@@ -89,17 +101,30 @@ module EchoServer
 
     module EM
       def receive_data(klass_and_method)
+        log "\n"
         log "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}"
         CrossStub.refresh(:file => $cache_file)
         log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
         klass, method, *args = klass_and_method.split('.')
-        konst = klass.split(/::/).inject(Object) { |const_train, const| const_train.const_get(const) }
-        log "(3) EchoServer::EM#receive_data ... parses arguments to:",
-            "    * klass  ... #{klass}",
-            "    * method ... #{method}",
-            "    * args   ... #{args.inspect}"
-        value = args.empty? ? konst.send(method) :
-          konst.send(method, *args) rescue $!.message
+        konstants = klass.split(/::/)
+        if konstants.last.eql?('new')
+          konstants.slice!(-1)
+          konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
+          log "(3) EchoServer::EM#receive_data ... parses arguments to:",
+          "    * konst  ... #{konst}",
+          "    * method ... #{method}",
+          "    * args   ... #{args.inspect}"
+          value = args.empty? ? konst::new.send(method) :
+            konst::new.send(method, *args) rescue $!.message
+        else
+          konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
+          log "(3) EchoServer::EM#receive_data ... parses arguments to:",
+          "    * konst  ... #{konst}",
+          "    * method ... #{method}",
+          "    * args   ... #{args.inspect}"
+          value = args.empty? ? konst.send(method) :
+            konst.send(method, *args) rescue $!.message
+        end
         log "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}"
         send_data(Marshal.dump(value))
         log "(5) EchoServer::EM#receive_data ... end"
