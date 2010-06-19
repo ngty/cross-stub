@@ -10,4 +10,16 @@ module CrossStub
 
   end
 
+  module DEBUG
+    $debug_file = File.join(File.dirname(__FILE__), '..', '..', 'tmp', 'debug.log')
+
+    def self.print(msg)
+      File.open($debug_file, "a") do |f|
+        f.puts msg
+      end
+    end
+
+  end
+
+
 end
