@@ -32,14 +32,19 @@ end
 
 shared 'has other process setup' do
   before do
-    EchoServer.start unless ENV['ECHO_SERVER'] == 'false'
+    $echo_server_started ||= (
+      EchoServer.start unless ENV['ECHO_SERVER'] == 'false'
+      true
+    )
     @get_value = lambda do |klass_and_method_and_args|
       (value = EchoClient.get(klass_and_method_and_args)) !~ /^undefined method/ ? value :
         Object.we_just_wanna_trigger_a_no_method_error_with_this_very_long_and_weird_method!
     end
   end
-  after do
-    EchoServer.stop unless ENV['ECHO_SERVER'] == 'false'
-  end
 end
 
+at_exit do
+  $echo_server_started && (
+    EchoServer.stop unless ENV['ECHO_SERVER'] == 'false'
+  )
+end
