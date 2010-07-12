@@ -17,24 +17,11 @@ describe 'Stubbing Error' do
       }
     end
 
-<<<<<<< HEAD:spec/integration/stubbing_error_spec.rb
-  it 'should not be raised when stubbing nested class' do
-    should.not.raise(CrossStub::Error) {
-      AnyClass::Inner.xstub(:say_hello => 'i say hello')
-    }
-  end
-
-  it 'should not be raised when stubbing nested module' do
-    should.not.raise(CrossStub::Error) {
-      AnyModule::Inner.xstub(:say_hello => 'i say hello')
-    }
-=======
     it 'should not be raised when stubbing nested module' do
       should.not.raise(CrossStub::Error) {
-        OuterModule::InnerModule.send(:xstub, :say_hello => 'i say hello')
+        AnyModule::Inner.send(:xstub, :say_hello => 'i say hello')
       }
     end
->>>>>>> 5557c76... specs for instance stubs:spec/cross-stub/stubbing_error_spec.rb
   end
 
   describe "xstub_instances" do

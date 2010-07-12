@@ -12,16 +12,16 @@ class AnyClass
   def self.say_world
     'u say world'
   end
-<<<<<<< HEAD
+  def say_hello
+    'u say hello'
+  end
   class Inner
     def self.say_world
       'u say world'
     end
-=======
-
-  def say_hello
-    'u say hello'
->>>>>>> 5557c76... specs for instance stubs
+    def say_hello
+      'u say hello'
+    end
   end
 end
 
@@ -29,22 +29,13 @@ module AnyModule
   def self.say_world
     'u say world'
   end
-<<<<<<< HEAD
-  module Inner
-=======
-
   def say_hello
     'u say hello'
   end
-end
-
-module OuterModule
-  module InnerModule
->>>>>>> 5557c76... specs for instance stubs
+  module Inner
     def self.say_world
       'u say world'
     end
-
     def say_hello
       'u say hello'
     end
