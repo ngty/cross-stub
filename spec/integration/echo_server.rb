@@ -1,46 +1,14 @@
 require 'rubygems'
 require 'eventmachine'
+require File.join(File.dirname(__FILE__), 'definitions')
 
-$cache_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'stubbing')
-$log_file = File.join(File.dirname(__FILE__), '..', 'tmp', 'echoserver.log')
-$sleep_time = 1.5  # may need to increase this depending on ur machine's prowess
+$project_root = File.join(File.dirname(__FILE__), '..', '..')
+$cache_file = File.join($project_root, 'tmp', 'stubbing')
+$log_file = File.join($project_root, 'tmp', 'echoserver.log')
+$sleep_time = 2  # may need to increase this depending on ur machine's prowess
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(File.join($project_root, 'lib'))
 require 'cross-stub'
-
-class AnyClass
-  def self.say_world
-    'u say world'
-  end
-  def say_hello
-    'u say hello'
-  end
-  class Inner
-    def self.say_world
-      'u say world'
-    end
-    def say_hello
-      'u say hello'
-    end
-  end
-end
-
-module AnyModule
-  def self.say_world
-    'u say world'
-  end
-  def say_hello
-    'u say hello'
-  end
-  module Inner
-    def self.say_world
-      'u say world'
-    end
-    def say_hello
-      'u say hello'
-    end
-  end
-end
 
 module EchoClient
 

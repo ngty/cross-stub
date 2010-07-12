@@ -12,6 +12,7 @@ module CrossStub
 
   class Error < Exception ; end
   class CannotStubInstanceError < Error ; end
+  class ModuleCannotBeInstantiatedError < Error ; end
 
   class << self
 
@@ -48,23 +49,49 @@ module CrossStub
   end
 
   module ClassMethods
+
     def xstub(*args, &blk)
       CrossStub.apply(self, args, &blk)
     end
 
-    def xstub_instances(*args, &blk)
+    def xstub_instance(*args, &blk)
       CrossStub.apply_instance_stubs(self, args, &blk)
     end
+
+    alias_method :xstub_instances, :xstub_instance
+
+  end
+
+  module ModuleMethods
+
+    include ClassMethods
+
+    def xstub_instance(*args, &blk)
+      raise ModuleCannotBeInstantiatedError
+    end
+
+    alias_method :xstub_instances, :xstub_instance
+
   end
 
   module InstanceMethods
+
     def xstub(*args)
       raise CannotStubInstanceError
     end
+
+    alias_method :xstub_instance, :xstub
+    alias_method :xstub_instances, :xstub
+
   end
 
 end
 
-Object.send(:extend, CrossStub::ClassMethods)
-Object.send(:include, CrossStub::InstanceMethods)
-Module.send(:include, CrossStub::ClassMethods)
+Object.class_eval do
+  extend CrossStub::ClassMethods
+  include CrossStub::InstanceMethods
+end
+
+Module.class_eval do
+  include CrossStub::ModuleMethods
+end
