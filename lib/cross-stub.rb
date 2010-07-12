@@ -1,12 +1,18 @@
 require 'rubygems'
-require 'parse_tree'
 require 'ruby2ruby'
-require 'cross-stub/stub_helpers'
-require 'cross-stub/stub_instance_helpers'
-require 'cross-stub/setup_helpers'
-require 'cross-stub/cache_helpers'
-require 'cross-stub/pseudo_class'
-require 'cross-stub/pseudo_instance'
+require 'forwardable'
+require 'cross-stub/cache'
+require 'cross-stub/stubber'
+require 'cross-stub/arguments'
+require 'cross-stub/stores'
+
+begin
+  # OPTIONAL, we would use them if they are available (eg. in MRI 1.8).
+  require 'parse_tree'
+  require 'parse_tree_extensions'
+rescue
+  # Otherwise, we use ruby_parser .. (OUTSTANDING)
+end
 
 module CrossStub
 
@@ -16,46 +22,54 @@ module CrossStub
 
   class << self
 
-    include CacheHelpers
-    include SetupHelpers
-    include StubHelpers
-    include StubInstanceHelpers
+    extend Forwardable
+    def_delegator :'CrossStub::Cache', :setup
 
-    attr_reader :options
-
-    def setup(opts)
-      @options = opts
-      setup_for_current_process
+    def refresh(opts)
+      Cache.refresh(opts)
+      [[:previous, :unapply], [:current, :apply]].each do |(mode, method)|
+        Cache.get(mode).map do |cache_key, stubs|
+          type, thing = stubbable(cache_key)
+          Stubber.send(method, type, thing, stubs)
+        end
+      end
     end
 
     def clear
-      clear_stubs_for_current_process
-      clear_instance_stubs_for_current_process
+      Cache.get.map do |cache_key, stubs|
+        type, thing = stubbable(cache_key)
+        Stubber.unapply(type, thing, stubs)
+      end
+      Cache.clear
     end
 
-    def apply(*args, &blk)
-      apply_stubs_for_current_process(*args, &blk)
+    def apply(type, thing, cache_key, args, &block)
+      Cache.set(Cache.get.merge(
+        cache_key => Stubber.apply(type, thing, Arguments.parse(args, &block))
+      ))
     end
 
-    def refresh(opts)
-      @options = opts
-      apply_or_unapply_stubs_for_other_process
-      apply_or_unapply_instance_stubs_for_other_process
+    def stubbable(str)
+      [
+        str.end_with?(suffix = '#instance') ? :instance : :class,
+        klassify(str.sub(suffix,''))
+      ]
     end
 
-    def apply_instance_stubs(*args, &blk)
-      apply_instance_stubs_for_current_process(*args, &blk)
+    def klassify(str)
+      str.split('::').inject(Object){|klass, const| klass.const_get(const) }
     end
+
   end
 
   module ClassMethods
 
-    def xstub(*args, &blk)
-      CrossStub.apply(self, args, &blk)
+    def xstub(*args, &block)
+      CrossStub.apply(:class, self, self.to_s, args, &block)
     end
 
-    def xstub_instance(*args, &blk)
-      CrossStub.apply_instance_stubs(self, args, &blk)
+    def xstub_instance(*args, &block)
+      CrossStub.apply(:instance, self, '%s#instance' % self, args, &block)
     end
 
     alias_method :xstub_instances, :xstub_instance
@@ -66,7 +80,7 @@ module CrossStub
 
     include ClassMethods
 
-    def xstub_instance(*args, &blk)
+    def xstub_instance(*args, &block)
       raise ModuleCannotBeInstantiatedError
     end
 
