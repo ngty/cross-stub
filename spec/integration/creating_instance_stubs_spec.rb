@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 describe 'Creating Instance Stubs' do
 
   %w{current other}.each do |mode|
-    %w{AnyClass AnyClass::Inner}.each do |klass|
+    %w{AnyInstance AnyInstance::Inner}.each do |klass|
 
       describe '>> %s process (%s instance)' % [mode, klass] do
 
@@ -11,48 +11,48 @@ describe 'Creating Instance Stubs' do
         behaves_like "has #{mode} process setup"
 
         before do
-          @klass = @get_context[klass]
+          @context = @get_context[klass]
         end
 
         should "create with hash argument(s)" do
-          @klass.xstub({:say_hello => 'i say hello', :say_world => 'i say world'}, :instance => true)
-          @get_value["#{@klass}::new.say_hello"].should.equal 'i say hello'
-          @get_value["#{@klass}::new.say_world"].should.equal 'i say world'
+          @context.xstub({:bang => 'OOPS', :say => 'HELLO'}, :instance => true)
+          @get_value["#{@context}::new.bang"].should.equal 'OOPS'
+          @get_value["#{@context}::new.say"].should.equal 'HELLO'
         end
 
         should "create with symbol argument(s)" do
-          @klass.xstub(:say_hello, :instance => true)
-          @get_value["#{@klass}::new.say_hello"].should.equal nil
+          @context.xstub(:bang, :instance => true)
+          @get_value["#{@context}::new.bang"].should.equal nil
         end
 
         should "create with block with no argument" do
-          @klass.xstub(:instance => true) do
-            def say_hello ; 'i say hello' ; end
+          @context.xstub(:instance => true) do
+            def bang ; 'OOPS' ; end
           end
-          @get_value["#{@klass}::new.say_hello"].should.equal 'i say hello'
+          @get_value["#{@context}::new.bang"].should.equal 'OOPS'
         end
 
         should "create with symbol & block with no argument" do
-          @klass.xstub(:say_hello, :instance => true) do
-            def say_world ; 'i say world' ; end
+          @context.xstub(:bang, :instance => true) do
+            def say ; 'HELLO' ; end
           end
-          @get_value["#{@klass}::new.say_hello"].should.equal nil
-          @get_value["#{@klass}::new.say_world"].should.equal 'i say world'
+          @get_value["#{@context}::new.bang"].should.equal nil
+          @get_value["#{@context}::new.say"].should.equal 'HELLO'
         end
 
         should "create with hash & block with no argument" do
-          @klass.xstub({:say_hello => 'i say hello'}, :instance => true) do
-            def say_world ; 'i say world' ; end
+          @context.xstub({:bang => 'OOPS'}, :instance => true) do
+            def say ; 'HELLO' ; end
           end
-          @get_value["#{@klass}::new.say_hello"].should.equal 'i say hello'
-          @get_value["#{@klass}::new.say_world"].should.equal 'i say world'
+          @get_value["#{@context}::new.bang"].should.equal 'OOPS'
+          @get_value["#{@context}::new.say"].should.equal 'HELLO'
         end
 
         should "always create the most recent" do
-          found, expected = [], ['i say hello', 'i say something else', 'i say something else again']
+          found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
           stub_and_get_value = lambda do |value|
-            @klass.xstub({:say_hello => value}, :instance => true)
-            @get_value["#{@klass}::new.say_hello"]
+            @context.xstub({:bang => value}, :instance => true)
+            @get_value["#{@context}::new.bang"]
           end
 
           found << stub_and_get_value[expected[0]]
@@ -66,10 +66,12 @@ describe 'Creating Instance Stubs' do
         end
 
         should "create stub with dependency on other stub" do
-          @klass.xstub({:something => 'hello'}, :instance => true) do
-            def do_action(who, action) ; %\#{who} #{action} #{something}\ ; end
+          @context.xstub({:something => 'HELLO'}, :instance => true) do
+            def do_action(who, action)
+              %\#{who} #{action} #{something}\
+            end
           end
-          @get_value["#{@klass}::new.do_action.i.say"].should.equal 'i say hello'
+          @get_value["#{@context}::new.do_action.i.say"].should.equal 'i say HELLO'
         end
 
       end

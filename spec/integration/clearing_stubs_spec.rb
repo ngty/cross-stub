@@ -15,88 +15,88 @@ describe 'Clearing Stubs' do
         end
 
         should "clear hash generated stub and return original value" do
-          original_value = @context.say_world
-          @context.xstub(:say_world => 'i say world')
+          original_value = @context.say
+          @context.xstub(:say => 'HELLO')
           CrossStub.clear
-          @get_value["#{@context}.say_world"].should.equal original_value
+          @get_value["#{@context}.say"].should.equal original_value
         end
 
         should "clear hash generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
-            @context.xstub(:say_hello => 'i say hello')
+            @context.xstub(:bang => 'OOPS')
             CrossStub.clear
-            @get_value["#{@context}.say_hello"]
+            @get_value["#{@context}.bang"]
           end
         end
 
         should "clear symbol generated stub and return original value" do
-          original_value = @context.say_world
-          @context.xstub(:say_world)
+          original_value = @context.say
+          @context.xstub(:say)
           CrossStub.clear
-          @get_value["#{@context}.say_world"].should.equal original_value
+          @get_value["#{@context}.say"].should.equal original_value
         end
 
         should "clear symbol generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
-            @context.xstub(:say_hello)
+            @context.xstub(:bang)
             CrossStub.clear
-            @get_value["#{@context}.say_hello"]
+            @get_value["#{@context}.bang"]
           end
         end
 
         should "clear block generated stub and return original value" do
-          original_value = @context.say_world
+          original_value = @context.say
           @context.xstub do
-            def say_world ; 'i say world' ; end
+            def say ; 'HELLO' ; end
           end
           CrossStub.clear
-          @get_value["#{@context}.say_world"].should.equal original_value
+          @get_value["#{@context}.say"].should.equal original_value
         end
 
         should "clear block generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
             @context.xstub do
-              def say_hello ; 'i say hello' ; end
+              def bang ; 'OOPS' ; end
             end
             CrossStub.clear
-            @get_value["#{@context}.say_hello"]
+            @get_value["#{@context}.bang"]
           end
         end
 
         should "always clear previously generated stub" do
-          original_value = @context.say_world
+          original_value = @context.say
 
           # Stub an existing method
-          @context.xstub(:say_world => 'i say world')
-          @get_value["#{@context}.say_world"]
+          @context.xstub(:say => 'HELLO')
+          @get_value["#{@context}.say"]
 
           # Clear stubs without refreshing another process
           CrossStub.clear
           CrossStub.setup(:file => $cache_file)
 
           # Stub a non-existing method
-          @context.xstub(:say_hello => 'i say hello')
-          @get_value["#{@context}.say_hello"]
+          @context.xstub(:bang => 'OOPS')
+          @get_value["#{@context}.bang"]
 
           # Make sure existing method returns to original method
-          @get_value["#{@context}.say_world"].should.equal original_value
+          @get_value["#{@context}.say"].should.equal original_value
         end
 
         should "always clear previously generated stub and raise NoMethodError" do
           # Stub a non-existing method
-          @context.xstub(:say_hello => 'i say hello')
-          @get_value["#{@context}.say_hello"]
+          @context.xstub(:bang => 'OOPS')
+          @get_value["#{@context}.bang"]
 
           # Clear stubs without refreshing another process
           CrossStub.clear
           CrossStub.setup(:file => $cache_file)
 
           # Stub an existing method
-          @context.xstub(:say_world => 'i say world')
-          @get_value["#{@context}.say_world"]
+          @context.xstub(:say => 'HELLO')
+          @get_value["#{@context}.say"]
 
           # Make sure accessing non-existing method throws error
-          should.raise(NoMethodError) { @get_value["#{@context}.say_hello"] }
+          should.raise(NoMethodError) { @get_value["#{@context}.bang"] }
         end
 
         should "clear for method not implemented in ruby and return original value" do

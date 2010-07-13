@@ -1,5 +1,5 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
-require File.join(File.dirname(__FILE__), 'definitions')
+require File.join(File.dirname(__FILE__), 'klasses')
 require File.join(File.dirname(__FILE__), 'echo_server')
 
 shared 'has standard setup' do

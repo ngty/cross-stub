@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'eventmachine'
-require File.join(File.dirname(__FILE__), 'definitions')
+require File.join(File.dirname(__FILE__), 'klasses')
 
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
 $cache_file = File.join($project_root, 'tmp', 'stubbing')
