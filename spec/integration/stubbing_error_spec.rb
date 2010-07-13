@@ -4,7 +4,7 @@ describe 'Stubbing Error' do
 
   behaves_like 'has standard setup'
 
-  describe ">> xstub" do
+  describe ">> xstub (class/module)" do
 
     should 'not be raised when stubbing module' do
       lambda { AnyModule.send(:xstub, :say_hello => 'i say hello') }.
@@ -33,41 +33,31 @@ describe 'Stubbing Error' do
 
   end
 
-  describe ">> xstub_instances (alias xstub_instance)" do
+  describe ">> xstub (instance)" do
 
     should 'not be raised when stubbing class' do
-      [:xstub_instance, :xstub_instances].each do |stub|
-        lambda { AnyClass.send(stub, :say_hello => 'i say hello') }.
-          should.not.raise(CrossStub::Error)
-      end
+      lambda { AnyClass.xstub({:say_hello => 'i say hello'}, :instance => true) }.
+        should.not.raise(CrossStub::Error)
     end
 
     should 'not be raised when stubbing nested class' do
-      [:xstub_instance, :xstub_instances].each do |stub|
-        lambda { AnyClass::Inner.send(stub, :say_hello => 'i say hello') }.
-          should.not.raise(CrossStub::Error)
-      end
+      lambda { AnyClass::Inner.xstub({:say_hello => 'i say hello'}, :instance => true) }.
+        should.not.raise(CrossStub::Error)
     end
 
     should 'be raised when stubbing module' do
-      [:xstub_instance, :xstub_instances].each do |stub|
-        lambda { AnyModule.send(stub, :say_hello => 'i say hello') }.
-          should.raise(CrossStub::ModuleCannotBeInstantiatedError)
-      end
+      lambda { AnyModule.xstub({:say_hello => 'i say hello'}, :instance => true) }.
+        should.raise(CrossStub::ModuleCannotBeInstantiatedError)
     end
 
     should 'be raised when stubbing nested module' do
-      [:xstub_instance, :xstub_instances].each do |stub|
-        lambda { AnyModule::Inner.send(stub, :say_hello => 'i say hello') }.
-          should.raise(CrossStub::ModuleCannotBeInstantiatedError)
-      end
+      lambda { AnyModule::Inner.xstub({:say_hello => 'i say hello'}, :instance => true) }.
+        should.raise(CrossStub::ModuleCannotBeInstantiatedError)
     end
 
     should 'be raised when stubbing instance' do
-      [:xstub_instance, :xstub_instances].each do |stub|
-        lambda { AnyClass.new.send(stub, :say_hello => 'i say hello') }.
-          should.raise(CrossStub::CannotStubInstanceError)
-      end
+      lambda { AnyClass.new.xstub({:say_hello => 'i say hello'}, :instance => true) }.
+        should.raise(CrossStub::CannotStubInstanceError)
     end
 
   end

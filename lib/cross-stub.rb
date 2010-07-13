@@ -63,40 +63,32 @@ module CrossStub
   end
 
   module ClassMethods
-
     def xstub(*args, &block)
-      CrossStub.apply(:class, self, self.to_s, args, &block)
+      if args[-1].is_a?(::Hash) && args[-1][:instance]
+        raise ModuleCannotBeInstantiatedError if self.class == Module
+        CrossStub.apply(
+          :instance,                      # stubbing for instance
+          self,                           # the class to action on
+          '%s#instance' % self,           # cache key (storing of stubbing info for other process)
+          args.size>1 ? args[0..-2] : [], # stubbing arguments
+          &block                          # any other more complex stubbing arguments
+        )
+      else
+        CrossStub.apply(
+          :class,    # stubbing for class/module
+          self,      # the class to action on
+          "#{self}", # cache key (storing of stubbing info for other process)
+          args,      # stubbing arguments
+          &block     # any other more complex stubbing arguments
+        )
+      end
     end
-
-    def xstub_instance(*args, &block)
-      CrossStub.apply(:instance, self, '%s#instance' % self, args, &block)
-    end
-
-    alias_method :xstub_instances, :xstub_instance
-
-  end
-
-  module ModuleMethods
-
-    include ClassMethods
-
-    def xstub_instance(*args, &block)
-      raise ModuleCannotBeInstantiatedError
-    end
-
-    alias_method :xstub_instances, :xstub_instance
-
   end
 
   module InstanceMethods
-
     def xstub(*args)
       raise CannotStubInstanceError
     end
-
-    alias_method :xstub_instance, :xstub
-    alias_method :xstub_instances, :xstub
-
   end
 
 end
@@ -107,5 +99,5 @@ Object.class_eval do
 end
 
 Module.class_eval do
-  include CrossStub::ModuleMethods
+  include CrossStub::ClassMethods
 end

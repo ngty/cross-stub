@@ -17,14 +17,14 @@ describe 'Clearing Instance Stubs' do
 
         should "clear hash generated stub and return original value" do
           original_value = @instance.say_hello
-          @klass.xstub_instances(:say_hello => 'i say hello')
+          @klass.xstub({:say_hello => 'i say hello'}, :instance => true)
           CrossStub.clear
           @get_value["#{@klass}::new.say_hello"].should.equal original_value
         end
 
         should "clear hash generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
-            @klass.xstub_instances(:say_hi => 'i say hi')
+            @klass.xstub({:say_hi => 'i say hi'}, :instance => true)
             CrossStub.clear
             @get_value["#{@klass}::new.say_hi"]
           end
@@ -32,14 +32,14 @@ describe 'Clearing Instance Stubs' do
 
         should "clear symbol generated stub and return original value" do
           original_value = @instance.say_hello
-          @klass.xstub_instances(:say_hello)
+          @klass.xstub(:say_hello, :instance => true)
           CrossStub.clear
           @get_value["#{@klass}::new.say_hello"].should.equal original_value
         end
 
         should "clear symbol generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
-            @klass.xstub_instances(:say_hi)
+            @klass.xstub(:say_hi, :instance => true)
             CrossStub.clear
             @get_value["#{@klass}::new.say_hi"]
           end
@@ -47,7 +47,7 @@ describe 'Clearing Instance Stubs' do
 
         should "clear block generated stub and return original value" do
           original_value = @instance.say_hello
-          @klass.xstub_instances do
+          @klass.xstub(:instance => true) do
             def say_hello ; 'i say hello' ; end
           end
           CrossStub.clear
@@ -56,7 +56,7 @@ describe 'Clearing Instance Stubs' do
 
         should "clear block generated stub and raise NoMethodError" do
           should.raise(NoMethodError) do
-            @klass.xstub_instances do
+            @klass.xstub(:instance => true) do
               def say_hi ; 'i say hi' ; end
             end
             CrossStub.clear
@@ -68,7 +68,7 @@ describe 'Clearing Instance Stubs' do
           original_value = @instance.say_hello
 
           # Stub an existing method
-          @klass.xstub_instances(:say_hello => 'i say hello')
+          @klass.xstub({:say_hello => 'i say hello'}, :instance => true)
           @get_value["#{@klass}::new.say_hello"]
 
           # Clear stubs without refreshing another process
@@ -76,7 +76,7 @@ describe 'Clearing Instance Stubs' do
           CrossStub.setup(:file => $cache_file)
 
           # Stub a non-existing method
-          @klass.xstub_instances(:say_hi => 'i say hi')
+          @klass.xstub({:say_hi => 'i say hi'}, :instance => true)
           @get_value["#{@klass}::new.say_hi"]
 
           # Make sure existing method returns to original method
@@ -85,7 +85,7 @@ describe 'Clearing Instance Stubs' do
 
         should "always clear previously generated stub and raise NoMethodError" do
           # Stub a non-existing method
-          @klass.xstub_instances(:say_hi => 'i say hi')
+          @klass.xstub({:say_hi => 'i say hi'}, :instance => true)
           @get_value["#{@klass}::new.say_hi"]
 
           # Clear stubs without refreshing another process
@@ -93,7 +93,7 @@ describe 'Clearing Instance Stubs' do
           CrossStub.setup(:file => $cache_file)
 
           # Stub an existing method
-          @klass.xstub_instances(:say_hello => 'i say hello')
+          @klass.xstub({:say_hello => 'i say hello'}, :instance => true)
           @get_value["#{@klass}::new.say_hello"]
 
           # Make sure accessing non-existing method throws error
