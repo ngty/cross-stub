@@ -34,3 +34,4 @@ module CrossStub
 end
 
 require 'cross-stub/stores/file'
+require 'cross-stub/stores/memcache'

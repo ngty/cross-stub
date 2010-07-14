@@ -36,13 +36,19 @@ end
 
 shared 'has other process setup' do
   before do
-    $echo_server_started ||= (
-      EchoServer.start(@store_type) unless ENV['ECHO_SERVER'] == 'false'
-      true
-    )
     @get_value = lambda do |klass_and_method_and_args|
       (value = EchoClient.get(klass_and_method_and_args)) !~ /^undefined method/ ? value :
         Object.we_just_wanna_trigger_a_no_method_error_with_this_very_long_and_weird_method!
+    end
+
+    # NOTE: Start echo server only if:
+    # * it has never been started
+    # * the previous store_type is not the same as the current store type
+    (c = $cache_stores_in_action ||= []) << @store_type
+    if ENV['ECHO_SERVER'] != 'false' && (c.size == 1 or c[-2 .. -1].uniq.size == 2)
+      EchoServer.stop rescue nil
+      $echo_server_started = true
+      EchoServer.start(@store_type)
     end
   end
 end

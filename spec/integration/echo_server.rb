@@ -9,6 +9,7 @@ $sleep_time = 2  # may need to increase this depending on ur machine's prowess
 def cache_stores
   {
     :file => File.join($project_root, 'tmp', 'stubbing_cache'),
+    :memcache => 'localhost:11211/stubbing_cache'
   }
 end
 
