@@ -1,8 +1,6 @@
 module CrossStub
   module Stores
-    class File
-
-      include Traits
+    class File < Base
 
       def initialize(file, truncate = true)
         @file = file

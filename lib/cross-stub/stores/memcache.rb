@@ -1,8 +1,6 @@
 module CrossStub
   module Stores
-    class Memcache
-
-      include Traits
+    class Memcache < Base
 
       def initialize(connection_and_cache_id, truncate = true)
         require_libs
