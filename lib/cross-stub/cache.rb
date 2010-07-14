@@ -21,11 +21,13 @@ module CrossStub
       private
 
         def init(opts, truncate)
-          type, arg = opts.to_a[0]
+          type, arg = opts.to_a[0].map(&:to_s)
           @store =
-            case type
-            when :file then Stores::File.new(arg, truncate)
-            else raise UnsupportedCacheStore.new('Store type :%s is not supported !!' % type)
+            begin
+              store_name = '%s%s' % [type[0..0].upcase, type[1..-1].downcase]
+              Stores.const_get(store_name).new(arg, truncate)
+            rescue
+              raise UnsupportedCacheStore.new('Store type :%s is not supported !!' % type)
             end
         end
 
