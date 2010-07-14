@@ -2,6 +2,7 @@
 
 = Enhancements
 * added support for cross-stubbing instances [#liangzan]
+* added support for alternative cache store :memcache [#ngty]
 
 = Maintenance
 
