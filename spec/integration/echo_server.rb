@@ -3,9 +3,18 @@ require 'eventmachine'
 require File.join(File.dirname(__FILE__), 'class_definitions')
 
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
-$cache_file = File.join($project_root, 'tmp', 'stubbing')
 $log_file = File.join($project_root, 'tmp', 'echoserver.log')
 $sleep_time = 2  # may need to increase this depending on ur machine's prowess
+
+def cache_stores
+  {
+    :file => File.join($project_root, 'tmp', 'stubbing_cache'),
+  }
+end
+
+def cache_store(id)
+  {(id = :"#{id}") => cache_stores[id]}
+end
 
 $LOAD_PATH.unshift(File.join($project_root, 'lib'))
 require 'cross-stub'
@@ -52,11 +61,12 @@ module EchoServer
       @process.pid
     end
 
-    def start(other_process=false)
+    def start(store_type, other_process=false)
       unless other_process
-        @process = IO.popen("ruby #{__FILE__}")
+        @process = IO.popen("ruby #{__FILE__} #{store_type}")
         sleep $sleep_time
       else
+        $store_type = :"#{store_type}"
         EventMachine::run { EventMachine::start_server(ADDRESS, PORT, EM) }
       end
     end
@@ -73,7 +83,7 @@ module EchoServer
       def receive_data(klass_and_method)
         log "\n"
         log "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}"
-        CrossStub.refresh(:file => $cache_file)
+        CrossStub.refresh(cache_store($store_type))
         log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
         klass, method, *args = klass_and_method.split('.')
         konstants = klass.split(/::/)
@@ -111,7 +121,7 @@ if $0 == __FILE__
   begin
     require 'logger'
     $logger = Logger.new($log_file)
-    EchoServer.start(true)
+    EchoServer.start(ARGV[0], true)
   ensure
     $logger.close
   end

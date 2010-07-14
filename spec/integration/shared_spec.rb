@@ -2,12 +2,13 @@ require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 require File.join(File.dirname(__FILE__), 'class_definitions')
 require File.join(File.dirname(__FILE__), 'echo_server')
 
+def get_context(klass_or_module)
+  klass_or_module.split(/::/).inject(Object) { |context, name| context.const_get(name) }
+end
+
 shared 'has standard setup' do
   before do
-    CrossStub.setup(:file => $cache_file)
-    @get_context = lambda do |klass_or_module|
-      klass_or_module.split(/::/).inject(Object) { |context, name| context.const_get(name) }
-    end
+    CrossStub.setup(cache_store(@store_type))
   end
   after do
     CrossStub.clear
@@ -36,7 +37,7 @@ end
 shared 'has other process setup' do
   before do
     $echo_server_started ||= (
-      EchoServer.start unless ENV['ECHO_SERVER'] == 'false'
+      EchoServer.start(@store_type) unless ENV['ECHO_SERVER'] == 'false'
       true
     )
     @get_value = lambda do |klass_and_method_and_args|

@@ -2,9 +2,13 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 
 describe 'Stubbing Error' do
 
-  behaves_like 'has standard setup'
-
   describe ">> xstub (class/module)" do
+
+    before do
+      @store_type = :file
+    end
+
+    behaves_like 'has standard setup'
 
     should 'not be raised when stubbing module' do
       lambda { AnyModule.send(:xstub, :bang => 'OOPS') }.
