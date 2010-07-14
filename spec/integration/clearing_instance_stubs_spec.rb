@@ -6,7 +6,7 @@ describe 'Clearing Instance Stubs' do
     %w{AnyInstance AnyInstance::Inner}.each do |klass|
       cache_stores.keys.each do |store_type|
 
-        describe '>> %s process using :%s store(%s instance)' % [mode, store_type, klass] do
+        describe '>> %s process using :%s store (%s instance)' % [mode, store_type, klass] do
 
           before do
             @klass = get_context(klass)
