@@ -13,7 +13,7 @@ module CrossStub
           when ::Symbol then Array.parse(args)
           else {}
           end
-        ).merge(block_given? ? Proc.parse(block) : {})
+        ).merge(block_given? ? Proc.parse(&block) : {})
       end
 
     end

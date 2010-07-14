@@ -2,104 +2,688 @@ require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
 describe 'Extracting methods from proc' do
 
-  before do
-    @methods_hash_should_equal = lambda do |expected, block|
-      CrossStub::Arguments::Proc.parse(block).should.equal(expected)
-    end
-  end
+  extract = CrossStub::Arguments::Proc.method(:parse)
 
-  should 'return {} if proc is empty' do
-    @methods_hash_should_equal[{}, lambda{}]
-  end
+  describe '>> proc with single method (wo argument)' do
 
-  {
-#    __LINE__ => lambda{
-#      class X ; def m0 ; end ; end
-#    },
-    __LINE__ => lambda{
-      x = 1
-    },
-#    __LINE__ => lambda{
-#      X = 1
-#    },
-  }.each do |debug, block|
-    should "return {} if proc has anything but method definition [##{debug}]" do
-      @methods_hash_should_equal[{}, block]
-    end
-  end
+    expected = {:bang => "def bang\n  \"oops\"\nend"}
 
-  {
-    __LINE__ => lambda{
-      def m1 ; true; end
-    },
-    __LINE__ => lambda{
-      class X
-        def m0 ; end
-        def m1 ; end
+    {
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Always newlinling
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang
+            'oops'
+          end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang
+            'oops'
+          end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang
+            'oops'
+          end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang
+            'oops'
+          end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang
+            'oops'
+          end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang
+            'oops'
+          end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Partial newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang ; 'oops' ; end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang ; 'oops' ; end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang ; 'oops' ; end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang ; 'oops' ; end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang ; 'oops' ; end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang ; 'oops' ; end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> No newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do def bang ; 'oops' ; end end
+      ),
+      __LINE__ => (
+        lambda { def bang ; 'oops' ; end }
+      ),
+      __LINE__ => (
+        proc do def bang ; 'oops' ; end end
+      ),
+      __LINE__ => (
+        proc { def bang ; 'oops' ; end }
+      ),
+      __LINE__ => (
+        Proc.new do def bang ; 'oops' ; end end
+      ),
+      __LINE__ => (
+        Proc.new { def bang ; 'oops' ; end }
+      ),
+    }.each do |debug, block|
+      should "handle proc as variable [##{debug}]" do
+        extract.call(&block).should.equal(expected)
       end
-      def m1 ; true; end
-    },
-    __LINE__ => lambda{
-      def m1 ; true; end
-      class X
-        def m0 ; end
-        def m1 ; end
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang
+          'oops'
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang ; 'oops' ; end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do def bang ; 'oops' ; end ; end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang
+          'oops'
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang
+          'oops'
+        end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang ; 'oops' ; end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call { def bang ; 'oops' ; end }.should.equal(expected)
+    end
+
+  end
+
+  describe '>> proc with single method (w argument)' do
+
+    expected = {:shout => "def shout(wat)\n  wat\nend"}
+
+    {
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Always newlinling
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Partial newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def shout(wat) ; wat ; end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def shout(wat) ; wat ; end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def shout(wat) ; wat ; end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> No newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        lambda { def shout(wat) ; wat ; end }
+      ),
+      __LINE__ => (
+        proc do def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        proc { def shout(wat) ; wat ; end }
+      ),
+      __LINE__ => (
+        Proc.new do def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        Proc.new { def shout(wat) ; wat ; end }
+      ),
+    }.each do |debug, block|
+      should "handle proc as variable [##{debug}]" do
+        extract.call(&block).should.equal(expected)
       end
-    },
-    __LINE__ => lambda{
-      x = 1
-      def m1 ; true; end
-    },
-    __LINE__ => lambda{
-      def m1 ; true; end
-      x = 1
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def shout(wat)
+          wat
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def shout(wat) ; wat ; end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do def shout(wat) ; wat ; end end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def shout(wat)
+          wat
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def shout(wat)
+          wat
+        end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def shout(wat) ; wat ; end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call { def shout(wat) ; wat ; end }.should.equal(expected)
+    end
+
+  end
+
+  describe '>> proc with multiple methods (wo argument)' do
+
+    expected = {
+      :bang => "def bang\n  \"oops\"\nend",
+      :shout => "def shout\n  \"hello\"\nend"
     }
-  }.each do |debug, block|
-    should "return {:m1 => ...} if proc has ONE method [##{debug}]" do
-      @methods_hash_should_equal[{
-        :m1 => "def m1\n  true\nend"
-      }, block]
+
+    {
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Always newlinling
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang
+            'oops'
+          end
+          def shout
+            'hello'
+          end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Partial newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang ; 'oops' ; end
+          def shout ; 'hello' ; end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> No newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do def bang ; 'oops' ; end ; def shout ; 'hello' ; end end
+      ),
+      __LINE__ => (
+        lambda { def bang ; 'oops' ; end ; def shout ; 'hello' ; end }
+      ),
+      __LINE__ => (
+        proc do def bang ; 'oops' ; end ; def shout ; 'hello' ; end end
+      ),
+      __LINE__ => (
+        proc { def bang ; 'oops' ; end ; def shout ; 'hello' ; end }
+      ),
+      __LINE__ => (
+        Proc.new do def bang ; 'oops' ; end ; def shout ; 'hello' ; end end
+      ),
+      __LINE__ => (
+        Proc.new { def bang ; 'oops' ; end ; def shout ; 'hello' ; end }
+      ),
+    }.each do |debug, block|
+      should "handle proc as variable [##{debug}]" do
+        extract.call(&block).should.equal(expected)
+      end
     end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang
+          'oops'
+        end
+        def shout
+          'hello'
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang ; 'oops' ; end
+        def shout ; 'hello' ; end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do def bang ; 'oops' ; end ; def shout ; 'hello' ; end end.
+        should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang
+          'oops'
+        end
+        def shout
+          'hello'
+        end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang ; 'oops' ; end
+        def shout ; 'hello' ; end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call { def bang ; 'oops' ; end ; def shout ; 'hello' ; end }.
+        should.equal(expected)
+    end
+
   end
 
-  {
-    __LINE__ => lambda{
-      def m1 ; true; end
-      def m2 ; false; end
-    },
-    __LINE__ => lambda{
-      class X
-        def m0 ; end
-        def m1 ; end
+  describe '>> proc with multiple methods (w argument)' do
+
+    expected = {
+      :bang => "def bang(wat)\n  wat\nend",
+      :shout => "def shout(wat)\n  wat\nend"
+    }
+
+    {
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Always newlinling
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang(wat)
+            wat
+          end
+          def shout(wat)
+            wat
+          end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> Partial newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        lambda {
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        }
+      ),
+      __LINE__ => (
+        proc do
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        proc {
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        }
+      ),
+      __LINE__ => (
+        Proc.new do
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        end
+      ),
+      __LINE__ => (
+        Proc.new {
+          def bang(wat) ; wat ; end
+          def shout(wat) ; wat ; end
+        }
+      ),
+    # ////////////////////////////////////////////////////////////////////////
+    # >> No newlining
+    # ////////////////////////////////////////////////////////////////////////
+      __LINE__ => (
+        lambda do def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        lambda { def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end }
+      ),
+      __LINE__ => (
+        proc do def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        proc { def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end }
+      ),
+      __LINE__ => (
+        Proc.new do def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end end
+      ),
+      __LINE__ => (
+        Proc.new { def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end }
+      ),
+    }.each do |debug, block|
+      should "handle proc as variable [##{debug}]" do
+        extract.call(&block).should.equal(expected)
       end
-      def m1 ; true; end
-      def m2 ; false; end
-    },
-    __LINE__ => lambda{
-      def m1 ; true; end
-      class X
-        def m0 ; end
-        def m1 ; end
-      end
-      def m2 ; false; end
-    },
-    __LINE__ => lambda{
-      x = 1
-      def m1 ; true; end
-      def m2 ; false; end
-    },
-    __LINE__ => lambda{
-      def m1 ; true; end
-      x = 1
-      def m2 ; false; end
-    },
-  }.each do |debug, block|
-    should "return {:m1 => ..., :m2 => ...} if proc has MUTLIPLE methods [##{debug}]" do
-      @methods_hash_should_equal[{
-        :m1 => "def m1\n  true\nend",
-        :m2 => "def m2\n  false\nend"
-      }, block]
     end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang(wat)
+          wat
+        end
+        def shout(wat)
+          wat
+        end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do
+        def bang(wat) ; wat ; end
+        def shout(wat) ; wat ; end
+      end.should.equal(expected)
+    end
+
+    should "handle block using do ... end [##{__LINE__}]" do
+      extract.call do def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end end.
+        should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang(wat)
+          wat
+        end
+        def shout(wat)
+          wat
+        end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call {
+        def bang(wat) ; wat ; end
+        def shout(wat) ; wat ; end
+      }.should.equal(expected)
+    end
+
+    should "handle block using { ... } [##{__LINE__}]" do
+      extract.call { def bang(wat) ; wat ; end ; def shout(wat) ; wat ; end }.
+        should.equal(expected)
+    end
+
   end
 
 end

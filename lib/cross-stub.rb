@@ -1,18 +1,11 @@
 require 'rubygems'
 require 'ruby2ruby'
+require 'ruby_parser'
 require 'forwardable'
 require 'cross-stub/cache'
 require 'cross-stub/stubber'
 require 'cross-stub/arguments'
 require 'cross-stub/stores'
-
-begin
-  # OPTIONAL, we would use them if they are available (eg. in MRI 1.8).
-  require 'parse_tree'
-  require 'parse_tree_extensions'
-rescue
-  # Otherwise, we use ruby_parser .. (OUTSTANDING)
-end
 
 module CrossStub
 

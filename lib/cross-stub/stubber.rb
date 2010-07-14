@@ -103,7 +103,7 @@ module CrossStub
         alias_method :t_eval, :m_eval
 
         def has_method?(method)
-          @context.instance_methods.include?(method.to_s)
+          @context.instance_methods.map(&:to_s).include?(method.to_s)
         end
 
       end
