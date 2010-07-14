@@ -14,30 +14,32 @@ It's hosted on gemcutter.org.
 
 == Setting Up
 
-#1. If you are using rails, you are in luck:
+=== #1. Rails:
 
   $ ./script/generate cucumber
   $ ./script/generate cross_stub
 
-#2. Even if you are using something else, no worries:
+=== #2. Others (back to basics):
 
   # In the test setup method:
-  CrossStub.setup :file => <CACHE_FILE_PATH>
+  CrossStub.setup :file => <CACHE_FILE>
 
   # In the test teardown method:
   CrossStub.clear
 
   # Find an entry point in your target application, eg. in a server, the
   # point where all request handling starts:
-  CrossStub.refresh :file => <CACHE_FILE_PATH>
+  CrossStub.refresh :file => <CACHE_FILE>
+
+For a full list of available cache stores, scroll down to take a look at the 'Cache Stores' section.
 
 == Using It
 
 Cross-stubbing is simple:
 
-#1. Simple returning of nil or non-nil value:
+=== #1. Simple returning of nil or non-nil value:
 
-##1.1. Class method:
+==== #1.1. Class method:
 
   class Someone
     def self.say
@@ -51,7 +53,7 @@ Cross-stubbing is simple:
   Someone.xstub(:say => 'HELLO')
   Someone.say # yields: 'HELLO'
 
-##1.2. Instance method:
+==== #1.2. Instance method:
 
   Someone.xstub(:say, :instance => true)
   Someone.new.say # yields: nil
@@ -59,9 +61,9 @@ Cross-stubbing is simple:
   Someone.xstub({:say => 'HELLO'}, :instance => true)
   Someone.new.say # yields: 'HELLO'
 
-#2. If a stubbed method requires argument, pass :xstub a proc:
+=== #2. If a stubbed method requires argument, pass :xstub a proc:
 
-##2.1. Class method:
+==== #2.1. Class method:
 
   Someone.xstub do
     def say(something)
@@ -71,7 +73,7 @@ Cross-stubbing is simple:
 
   Someone.say('HELLO') # yields: 'saying "HELLO"'
 
-##2.2. Instance method:
+==== #2.2. Instance method:
 
   Someone.xstub(:instance => true) do
     def say(something)
@@ -81,7 +83,7 @@ Cross-stubbing is simple:
 
   Someone.new.say('HELLO') # yields: 'saying "HELLO"'
 
-#3. Something more complicated:
+=== #3. Something more complicated:
 
   something = 'hello'
   Someone.xstub do
@@ -102,6 +104,28 @@ The above fails as a result of undefined variable/method 'something', to workaro
 
   Someone.say # yields: 'saying "HELLO"'
 
+== Cache Stores
+
+The following describes all available cache stores available:
+
+=== #1. File
+
+  # Setting up (current process)
+  CrossStub.setup :file => '<CACHE_FILE>'
+
+  # Refreshing (other process)
+  CrossStub.refresh :file => '<CACHE_FILE>'
+
+=== #2. Memcache
+
+  # Setting up (current process)
+  CrossStub.setup :memcache => 'localhost:11211/<CACHE_ID>'
+
+  # Refreshing (other process)
+  CrossStub.refresh :memcache => 'localhost:11211/<CACHE_ID>'
+
+Adding new stores is super easy (w.r.t testing & actual implementation), let me know if u need more :]
+
 == Caveats
 
 #1. Cross-stub uses ruby's Marshal class to dump & load the stubs, thus it has the same limitations as Marshal
@@ -112,10 +136,10 @@ The above fails as a result of undefined variable/method 'something', to workaro
 
 == Contacts
 
-Written 2009 by:
+Written since 2009 by:
 
-#1. NgTzeYang, contact ngty77[at]gmail.com or http://github.com/ngty
+#1. NgTzeYang, contact ngty77[at]gmail[dot]com or http://github.com/ngty
 
-#2. WongLiangZan, contact liangzan[at]gmail.com or http://github.com/liangzan
+#2. WongLiangZan, contact liangzan[at]gmail[dot]com or http://github.com/liangzan
 
 Released under the MIT license
