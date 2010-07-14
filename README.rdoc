@@ -106,7 +106,7 @@ The above fails as a result of undefined variable/method 'something', to workaro
 
 == Cache Stores
 
-The following describes all available cache stores available:
+Cache stores are needed to allow stubs to be made available for different processes. The following describes all cache stores available:
 
 === #1. File
 
@@ -116,7 +116,7 @@ The following describes all available cache stores available:
   # Refreshing (other process)
   CrossStub.refresh :file => '<CACHE_FILE>'
 
-=== #2. Memcache
+=== #2. Memcache (requires memcache-client)
 
   # Setting up (current process)
   CrossStub.setup :memcache => 'localhost:11211/<CACHE_ID>'
@@ -124,7 +124,7 @@ The following describes all available cache stores available:
   # Refreshing (other process)
   CrossStub.refresh :memcache => 'localhost:11211/<CACHE_ID>'
 
-Adding new stores is super easy (w.r.t testing & actual implementation), let me know if u need more :]
+Adding new store is super easy (w.r.t testing & actual implementation), let me know if u need more :]
 
 == Caveats
 
