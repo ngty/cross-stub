@@ -2,7 +2,7 @@
 
 == Introduction
 
-Existing mocking/stubbing frameworks support only stubbing in the current process. This is OK most of the time. However, when running cucumber integration test suite in non-webrat mode, these in-process stubbing frameworks simply doesn't help. Eg. I want Time.now to always return a timing that should be a Sunday, how do I do that when running cucumber in selenium, culerity, steam, blah, blah mode? It doesn't seem straight-forward me.
+Existing mocking/stubbing frameworks support only stubbing in the current process. This is OK most of the time. However, when running cucumber integration test suite in another process, these in-process stubbing frameworks simply doesn't help. Eg. I want Time.now to always return a timing that should be a Sunday, how do I do that when running cucumber in selenium, culerity, steam, blah, blah mode? It doesn't seem straight-forward me.
 
 (Let's not argue whether stubbing should be encouraged. It is an itch, the poor itch needs to be scratched.)
 
@@ -33,58 +33,78 @@ It's hosted on gemcutter.org.
 
 == Using It
 
-Using cross-stub is simple:
+Cross-stubbing is simple:
 
 #1. Simple returning of nil or non-nil value:
 
+##1.1. Class method:
+
   class Someone
-    def self.laugh
-      'HaHa'
+    def self.say
+      'hello'
     end
   end
 
-  Someone.xstub(:laugh)
-  Someone.laugh # yields: nil
+  Someone.xstub(:say)
+  Someone.say # yields: nil
 
-  Someone.xstub(:laugh, 'HoHo')
-  Someone.laugh # yields: 'HoHo'
+  Someone.xstub(:say => 'HELLO')
+  Someone.say # yields: 'HELLO'
+
+##1.2. Instance method:
+
+  Someone.xstub(:say, :instance => true)
+  Someone.new.say # yields: nil
+
+  Someone.xstub({:say => 'HELLO'}, :instance => true)
+  Someone.new.say # yields: 'HELLO'
 
 #2. If a stubbed method requires argument, pass :xstub a proc:
 
+##2.1. Class method:
+
   Someone.xstub do
-    def loves(other)
-      "I love #{other}"
+    def say(something)
+      'saying "%s"' % something
     end
   end
 
-  Someone.loves('you') # yields: 'I love you'
+  Someone.say('HELLO') # yields: 'saying "HELLO"'
+
+##2.2. Instance method:
+
+  Someone.xstub(:instance => true) do
+    def say(something)
+      'saying "%s"' % something
+    end
+  end
+
+  Someone.new.say('HELLO') # yields: 'saying "HELLO"'
 
 #3. Something more complicated:
 
   something = 'hello'
   Someone.xstub do
-    def do_action(who, action)
-      %\#{who} #{action} #{something}\
+    def say
+      'saying "%s"' % something
     end
   end
 
-  Someone.do_action('i', 'say') # failure !!
+  Someone.say # failure !!
 
 The above fails as a result of undefined variable/method 'something', to workaround we can have:
 
-  Someone.xstub(:something => 'hello') do
-    def do_action(who, action)
-      %\#{who} #{action} #{something}\
+  Someone.xstub(:something => 'HELLO') do
+    def say
+      'saying "%s"' % something
     end
   end
 
-  Someone.do_action('i', 'say') # yields: 'i say hello'
+  Someone.say # yields: 'saying "HELLO"'
 
 == Caveats
 
 #1. Cross-stub uses ruby's Marshal class to dump & load the stubs, thus it has the same limitations as Marshal
-
-#2. Cross-stub only supports stubbing of class methods, since it makes no sense to do cross process stubbing of instances
 
 == TODO(s)
 
