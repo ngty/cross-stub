@@ -3,6 +3,10 @@
 = Enhancements
 * added support for cross-stubbing instances [#liangzan]
 
+= Maintenance
+
+* complete rewrite to have cleaner implementation (hopefully) [#ngty]
+
 === 0.1.4 2010-04-03
 
 = Bugfixes
