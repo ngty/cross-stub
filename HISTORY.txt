@@ -1,12 +1,13 @@
 === Current
 
-= Enhancements
+= New Features
 * added support for cross-stubbing instances [#liangzan]
 * added support for alternative cache stores :memcache & :redis [#ngty]
-* achieved compatibility with ruby-1.91 (by switching from ParseTree to RubyParser) [#ngty]
+* officially support MRI-1.8.7, MRI-1.9.1, JRUBY-1.5.1 & REE-1.8.7 [#ngty]
 
-= Maintenance
+= House-Keeping
 
+* dropped ParseTree dependency, use RubyParser instead [#ngty]
 * complete rewrite to have cleaner implementation (hopefully) [#ngty]
 
 === 0.1.4 2010-04-03
