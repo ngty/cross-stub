@@ -18,43 +18,43 @@ describe 'Creating Instance Stubs' do
 
           should "create with hash argument(s)" do
             @context.xstub({:bang => 'OOPS', :say => 'HELLO'}, :instance => true)
-            @get_value["#{@context}::new.bang"].should.equal 'OOPS'
-            @get_value["#{@context}::new.say"].should.equal 'HELLO'
+            @get_value["#{@context}#new.bang"].should.equal 'OOPS'
+            @get_value["#{@context}#new.say"].should.equal 'HELLO'
           end
 
           should "create with symbol argument(s)" do
             @context.xstub(:bang, :instance => true)
-            @get_value["#{@context}::new.bang"].should.equal nil
+            @get_value["#{@context}#new.bang"].should.equal nil
           end
 
           should "create with block with no argument" do
             @context.xstub(:instance => true) do
               def bang ; 'OOPS' ; end
             end
-            @get_value["#{@context}::new.bang"].should.equal 'OOPS'
+            @get_value["#{@context}#new.bang"].should.equal 'OOPS'
           end
 
           should "create with symbol & block with no argument" do
             @context.xstub(:bang, :instance => true) do
               def say ; 'HELLO' ; end
             end
-            @get_value["#{@context}::new.bang"].should.equal nil
-            @get_value["#{@context}::new.say"].should.equal 'HELLO'
+            @get_value["#{@context}#new.bang"].should.equal nil
+            @get_value["#{@context}#new.say"].should.equal 'HELLO'
           end
 
           should "create with hash & block with no argument" do
             @context.xstub({:bang => 'OOPS'}, :instance => true) do
               def say ; 'HELLO' ; end
             end
-            @get_value["#{@context}::new.bang"].should.equal 'OOPS'
-            @get_value["#{@context}::new.say"].should.equal 'HELLO'
+            @get_value["#{@context}#new.bang"].should.equal 'OOPS'
+            @get_value["#{@context}#new.say"].should.equal 'HELLO'
           end
 
           should "always create the most recent" do
             found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
             stub_and_get_value = lambda do |value|
               @context.xstub({:bang => value}, :instance => true)
-              @get_value["#{@context}::new.bang"]
+              @get_value["#{@context}#new.bang"]
             end
 
             found << stub_and_get_value[expected[0]]
@@ -73,7 +73,7 @@ describe 'Creating Instance Stubs' do
                 %\#{who} #{action} #{something}\
               end
             end
-            @get_value["#{@context}::new.do_action.i.say"].should.equal 'i say HELLO'
+            @get_value["#{@context}#new.do_action.i.say"].should.equal 'i say HELLO'
           end
 
         end

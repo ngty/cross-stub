@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'eventmachine'
+require 'base64'
 require File.join(File.dirname(__FILE__), 'class_definitions')
 
-$ruby_version = [
+$ruby_id = [
   RUBY_VERSION.gsub(/[^\d]/,''),
   RUBY_PLATFORM =~ /java/i ? 'j' : '',
   RUBY_DESCRIPTION =~ /enterprise/i ? 'e' : ''
@@ -10,13 +11,13 @@ $ruby_version = [
 
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
 $sleep_time = 2  # may need to increase this depending on ur machine's prowess
-$log_file = File.join($project_root, 'tmp', "echoserver-#{$ruby_version}.log")
+$log_file = File.join($project_root, 'tmp', "echoserver-#{$ruby_id}.log")
 
 def cache_stores
   {
-    :file => File.join($project_root, 'tmp', "stubbing-#{$ruby_version}.cache"),
-    :memcache => "localhost:11211/stubbing-#{$ruby_version}.cache",
-    :redis => "localhost:6379/stubbing-#{$ruby_version}.cache",
+    :file => File.join($project_root, 'tmp', "stubbing-#{$ruby_id}.cache"),
+    :memcache => "localhost:11211/stubbing-#{$ruby_id}.cache",
+    :redis => "localhost:6379/stubbing-#{$ruby_id}.cache",
   }
 end
 
@@ -37,7 +38,7 @@ module EchoClient
       address, port = EchoServer::ADDRESS, EchoServer::PORT
       EventMachine::run do
         (EventMachine::connect(address, port, EM)).
-          execute(klass_and_method) {|data| self.result = Marshal.load(data) }
+          execute(klass_and_method) {|data| self.result = Marshal.load(Base64.decode64(data)) }
       end
       self.result
     end
@@ -62,7 +63,7 @@ end
 module EchoServer
 
   ADDRESS = '127.0.0.1'
-  PORT = 9000 + $ruby_version[/(\d+)/,1].to_i + ({'j' => 10, 'e' => 20}[$ruby_version[-1..-1]] || 0)
+  PORT = 10000 + $ruby_id[/(\d+)/,1].to_i + ({'j' => 10, 'e' => 20}[$ruby_id[-1..-1]] || 0)
 
   class << self
 
@@ -70,12 +71,11 @@ module EchoServer
       @process.pid
     end
 
-    def start(store_type, other_process=false)
+    def start(other_process=false)
       unless other_process
-        @process = IO.popen("ruby #{__FILE__} #{store_type}")
+        @process = IO.popen("ruby #{__FILE__}")
         sleep $sleep_time
       else
-        $store_type = :"#{store_type}"
         EventMachine::run { EventMachine::start_server(ADDRESS, PORT, EM) }
       end
     end
@@ -84,38 +84,37 @@ module EchoServer
       Process.kill('SIGHUP', pid)
     end
 
+    def log(*msg)
+      $logger << [msg, ""].flatten.join("\n")
+    end
+
   end
 
   private
 
     module EM
-      def receive_data(klass_and_method)
+      def receive_data(store_type_and_klass_and_method)
         log "\n"
-        log "(1) EchoServer::EM#receive_data ... receives: #{klass_and_method}"
-        CrossStub.refresh(cache_store($store_type))
+        log "(1) EchoServer::EM#receive_data ... receives: #{store_type_and_klass_and_method}"
+
+        store_type, klass_and_method = store_type_and_klass_and_method.match(/^(.*?)\/(.*)$/)[1..2]
+        CrossStub.refresh(cache_store(store_type))
         log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
-        klass, method, *args = klass_and_method.split('.')
-        konstants = klass.split(/::/)
-        if konstants.last.eql?('new')
-          konstants.slice!(-1)
-          konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
-          log "(3) EchoServer::EM#receive_data ... parses arguments to:",
-          "    * konst  ... #{konst}",
-          "    * method ... #{method}",
-          "    * args   ... #{args.inspect}"
-          value = args.empty? ? konst::new.send(method) :
-            konst::new.send(method, *args) rescue $!.message
-        else
-          konst = konstants.inject(Object) { |const_train, const| const_train.const_get(const) }
-          log "(3) EchoServer::EM#receive_data ... parses arguments to:",
-          "    * konst  ... #{konst}",
-          "    * method ... #{method}",
-          "    * args   ... #{args.inspect}"
-          value = args.empty? ? konst.send(method) :
-            konst.send(method, *args) rescue $!.message
-        end
+
+        klass_descrp, method, *args = klass_and_method.split('.')
+        is_instance = klass_descrp.end_with?(suffix = '#new')
+        klass = klass_descrp.sub(suffix,'').split(/::/).inject(Object){|k,c| k.const_get(c) }
+        receiver = is_instance ? klass.new : klass
+
+        log "(3) EchoServer::EM#receive_data ... parses arguments to:",
+        "    * receiver ... #{klass}%s" % (is_instance ? "#new" : nil),
+        "    * method   ... #{method}",
+        "    * args     ... #{args.inspect}"
+
+        value = args.empty? ? receiver.send(method) : receiver.send(method, *args) rescue $!.message
+
         log "(4) EchoServer::EM#receive_data ... returns: #{value.inspect}"
-        send_data(Marshal.dump(value))
+        send_data(Base64.encode64(Marshal.dump(value)))
         log "(5) EchoServer::EM#receive_data ... end"
       end
 
@@ -130,7 +129,9 @@ if $0 == __FILE__
   begin
     require 'logger'
     $logger = Logger.new($log_file)
-    EchoServer.start(ARGV[0], true)
+    EchoServer.start(true)
+  rescue
+    $logger << $!.inspect
   ensure
     $logger.close
   end
