@@ -3,13 +3,14 @@ require 'eventmachine'
 require File.join(File.dirname(__FILE__), 'class_definitions')
 
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
-$log_file = File.join($project_root, 'tmp', 'echoserver.log')
 $sleep_time = 2  # may need to increase this depending on ur machine's prowess
+$ruby_version = RUBY_VERSION.gsub(/[^\d]/,'')
+$log_file = File.join($project_root, 'tmp', "echoserver%#{$ruby_version}.log")
 
 def cache_stores
   {
-    :file => File.join($project_root, 'tmp', 'stubbing_cache'),
-    :memcache => 'localhost:11211/stubbing_cache'
+    :file => File.join($project_root, 'tmp', "stubbing%#{$ruby_version}.cache"),
+    :memcache => "localhost:11211/stubbing%#{$ruby_version}.cache",
   }
 end
 
@@ -54,7 +55,7 @@ end
 
 module EchoServer
 
-  ADDRESS, PORT = '127.0.0.1', 8081
+  ADDRESS, PORT = '127.0.0.1', "9#{$ruby_version}".to_i
 
   class << self
 
