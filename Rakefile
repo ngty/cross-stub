@@ -16,7 +16,8 @@ begin
     gem.add_dependency "ruby_parser", "= 2.0.4"
     # ##
     # TODO: How do we declare the following optional dependencies ??
-    # 2. gem.add_dependency "memcache-client", "= 1.8.5"
+    # 1. gem.add_dependency "memcache-client", "= 1.8.5"
+    # 2. gem.add_dependency "redis", "= 2.0.3"
     # ##
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

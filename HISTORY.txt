@@ -2,7 +2,7 @@
 
 = Enhancements
 * added support for cross-stubbing instances [#liangzan]
-* added support for alternative cache store :memcache [#ngty]
+* added support for alternative cache stores :memcache & :redis [#ngty]
 * achieved compatibility with ruby-1.91 (by switching from ParseTree to RubyParser) [#ngty]
 
 = Maintenance

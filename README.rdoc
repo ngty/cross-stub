@@ -118,13 +118,21 @@ Cache stores are needed to allow stubs to be made available for different proces
   # Refreshing (other process)
   CrossStub.refresh :file => '<CACHE_FILE>'
 
-=== #2. Memcache (requires memcache-client)
+=== #2. Memcache (requires memcache-client gem)
 
   # Setting up (current process)
   CrossStub.setup :memcache => 'localhost:11211/<CACHE_ID>'
 
   # Refreshing (other process)
   CrossStub.refresh :memcache => 'localhost:11211/<CACHE_ID>'
+
+=== #3. Redis (requires redis gem)
+
+  # Setting up (current process)
+  CrossStub.setup :redis => 'localhost:6379/<CACHE_ID>'
+
+  # Refreshing (other process)
+  CrossStub.refresh :redis => 'localhost:6379/<CACHE_ID>'
 
 Adding new store is super easy (w.r.t testing & actual implementation), let me know if u need more :]
 
