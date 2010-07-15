@@ -61,7 +61,8 @@ end
 
 module EchoServer
 
-  ADDRESS, PORT = '127.0.0.1', "9#{$ruby_version}".to_i
+  ADDRESS = '127.0.0.1'
+  PORT = 9000 + $ruby_version[/(\d+)/,1].to_i + ({'j' => 10, 'e' => 20}[$ruby_version[-1..-1]] || 0)
 
   class << self
 
