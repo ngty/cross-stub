@@ -11,6 +11,7 @@ def cache_stores
   {
     :file => File.join($project_root, 'tmp', "stubbing%#{$ruby_version}.cache"),
     :memcache => "localhost:11211/stubbing%#{$ruby_version}.cache",
+    :redis => "localhost:6379/stubbing%#{$ruby_version}.cache",
   }
 end
 
