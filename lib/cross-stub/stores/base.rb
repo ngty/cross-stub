@@ -5,6 +5,10 @@ module CrossStub
   module Stores
     class Base
 
+      def initialize(truncate)
+        truncate && dump(current, {})
+      end
+
       def get(mode = :current)
         case mode
         when :current then load(current)

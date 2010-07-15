@@ -3,10 +3,10 @@ module CrossStub
     class Memcache < Base
 
       def initialize(connection_and_cache_id, truncate = true)
-        require_libs
+        require 'memcache'
         connection, @cache_id = connection_and_cache_id.split('/')
         @memcache = MemCache.new(connection)
-        truncate && dump(current, {})
+        super(truncate)
       end
 
       def current
@@ -18,11 +18,6 @@ module CrossStub
       end
 
       private
-
-        def require_libs
-          require 'rubygems'
-          require 'memcache'
-        end
 
         def exists?(cache_id)
           not @memcache[cache_id].nil?

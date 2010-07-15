@@ -4,7 +4,7 @@ module CrossStub
 
       def initialize(file, truncate = true)
         @file = file
-        truncate && dump(current, {})
+        super(truncate)
       end
 
       def current
