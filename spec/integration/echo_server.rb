@@ -10,13 +10,13 @@ $ruby_version = [
 
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
 $sleep_time = 2  # may need to increase this depending on ur machine's prowess
-$log_file = File.join($project_root, 'tmp', "echoserver%#{$ruby_version}.log")
+$log_file = File.join($project_root, 'tmp', "echoserver-#{$ruby_version}.log")
 
 def cache_stores
   {
-    :file => File.join($project_root, 'tmp', "stubbing%#{$ruby_version}.cache"),
-    :memcache => "localhost:11211/stubbing%#{$ruby_version}.cache",
-    :redis => "localhost:6379/stubbing%#{$ruby_version}.cache",
+    :file => File.join($project_root, 'tmp', "stubbing-#{$ruby_version}.cache"),
+    :memcache => "localhost:11211/stubbing-#{$ruby_version}.cache",
+    :redis => "localhost:6379/stubbing-#{$ruby_version}.cache",
   }
 end
 
