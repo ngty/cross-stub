@@ -2,9 +2,9 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 
 describe 'Creating Stubs' do
 
-  %w{current other}.each do |mode|
-    %w{AnyClass AnyClass::Inner AnyModule AnyModule::Inner}.each do |klass_or_module|
-      cache_stores.keys.each do |store_type|
+  cache_stores.keys.each do |store_type|
+    %w{current other}.each do |mode|
+      %w{AnyClass AnyClass::Inner AnyModule AnyModule::Inner}.each do |klass_or_module|
 
         describe '>> %s process using :%s store (%s)' % [mode, store_type, klass_or_module] do
 

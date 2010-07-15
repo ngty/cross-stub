@@ -2,9 +2,9 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 
 describe 'Creating Instance Stubs' do
 
-  %w{current other}.each do |mode|
-    %w{AnyInstance AnyInstance::Inner}.each do |klass|
-      cache_stores.keys.each do |store_type|
+  cache_stores.keys.each do |store_type|
+    %w{current other}.each do |mode|
+      %w{AnyInstance AnyInstance::Inner}.each do |klass|
 
         describe '>> %s process using :%s store (%s)' % [mode, store_type, klass] do
 
