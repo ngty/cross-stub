@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'base64'
 require 'ruby2ruby'
 require 'ruby_parser'
 require 'forwardable'

@@ -5,14 +5,10 @@ module CrossStub
 
         def parse(hash)
           hash.inject({}) do |memo, (name, val)|
-            code = "def #{name} ; Marshal.load(#{quote(Marshal.dump(val))}) ; end"
+            marshalized = Base64.encode64(Marshal.dump(val)).gsub('|','\|')
+            code = "def #{name} ; Marshal.load(Base64.decode64(%|#{marshalized}|)) ; end"
             memo.merge(:"#{name}" => code)
           end
-        end
-
-        def quote(str)
-          !str.include?('"') ? %|"#{str}"| :
-            str.split('"',-1).map{|s| [%|"#{s}"|,%|'"'|] }.flatten[0..-2].join('+')
         end
 
       end
