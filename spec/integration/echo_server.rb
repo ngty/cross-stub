@@ -2,9 +2,14 @@ require 'rubygems'
 require 'eventmachine'
 require File.join(File.dirname(__FILE__), 'class_definitions')
 
+$ruby_version = [
+  RUBY_VERSION.gsub(/[^\d]/,''),
+  RUBY_PLATFORM =~ /java/i ? 'j' : '',
+  RUBY_DESCRIPTION =~ /enterprise/i ? 'e' : ''
+].join
+
 $project_root = File.join(File.dirname(__FILE__), '..', '..')
 $sleep_time = 2  # may need to increase this depending on ur machine's prowess
-$ruby_version = RUBY_VERSION.gsub(/[^\d]/,'')
 $log_file = File.join($project_root, 'tmp', "echoserver%#{$ruby_version}.log")
 
 def cache_stores
