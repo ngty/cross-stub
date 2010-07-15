@@ -60,9 +60,9 @@ module CrossStub
           end
 
           class Minimalist
+            orig_verbosity, $VERBOSE = $VERBOSE, nil
             alias_method :__instance_eval__, :instance_eval
             alias_method :__methods__, :methods
-            orig_verbosity, $VERBOSE = $VERBOSE, nil
             instance_methods.each{|meth| undef_method(meth) if meth.to_s !~ /^__.*?__$/ }
             $VERBOSE = orig_verbosity
           end
