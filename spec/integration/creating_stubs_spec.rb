@@ -18,20 +18,20 @@ describe 'Creating Stubs' do
 
             should "create with hash argument(s)" do
               @klass.xstub(:bang => 'OOPS', :say => 'HELLO')
-              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
-              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+              @call["#{@descriptor}.bang"].should.equal 'OOPS'
+              @call["#{@descriptor}.say"].should.equal 'HELLO'
             end
 
             should "create with symbol argument(s)" do
               @klass.xstub(:bang)
-              @get_value["#{@descriptor}.bang"].should.equal nil
+              @call["#{@descriptor}.bang"].should.equal nil
             end
 
             should "create with block with no argument" do
               @klass.xstub do
                 def bang ; 'OOPS' ; end
               end
-              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
+              @call["#{@descriptor}.bang"].should.equal 'OOPS'
             end
 
             should "create with symbol & block with no argument" do
@@ -40,8 +40,8 @@ describe 'Creating Stubs' do
                   'HELLO'
                 end
               end
-              @get_value["#{@descriptor}.bang"].should.equal nil
-              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+              @call["#{@descriptor}.bang"].should.equal nil
+              @call["#{@descriptor}.say"].should.equal 'HELLO'
             end
 
             should "create with hash & block with no argument" do
@@ -50,15 +50,15 @@ describe 'Creating Stubs' do
                   'HELLO'
                 end
               end
-              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
-              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+              @call["#{@descriptor}.bang"].should.equal 'OOPS'
+              @call["#{@descriptor}.say"].should.equal 'HELLO'
             end
 
             should "always create the most recent" do
               found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
               stub_and_get_value = lambda do |value|
                 @klass.xstub(:bang => value)
-                @get_value["#{@descriptor}.bang"]
+                @call["#{@descriptor}.bang"]
               end
 
               found << stub_and_get_value[expected[0]]
@@ -77,13 +77,13 @@ describe 'Creating Stubs' do
                   %\#{who} #{action} #{something}\
                 end
               end
-              @get_value["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
+              @call["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
             end
 
             should "create for method not implemented in ruby" do
               now = Time.now - 365*60*60*24
               Time.xstub(:now => now)
-              @get_value['Time.now'].should.equal now
+              @call['Time.now'].should.equal now
             end
 
           end

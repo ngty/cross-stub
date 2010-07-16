@@ -9,7 +9,7 @@ end
 
 shared 'has current process setup' do
   behaves_like 'has standard setup'
-  before { @get_value = Object.method(:do_local_method_call) }
+  before { @call = Object.method(:do_local_method_call) }
 end
 
 shared 'has other process setup' do
@@ -17,7 +17,7 @@ shared 'has other process setup' do
   behaves_like 'has standard setup'
 
   before do
-    @get_value = lambda do |klass_and_method_and_args|
+    @call = lambda do |klass_and_method_and_args|
       do_remote_method_call("%s/%s" % [@store_type, klass_and_method_and_args])
     end
     $service_started ||= (

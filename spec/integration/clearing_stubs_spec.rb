@@ -20,14 +20,14 @@ describe 'Clearing Stubs' do
             original_value = @klass.say
             @klass.xstub(:say => 'HELLO')
             CrossStub.clear
-            @get_value["#{@descriptor}.say"].should.equal original_value
+            @call["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear hash generated stub and raise NoMethodError" do
             should.raise(NoMethodError) do
               @klass.xstub(:bang => 'OOPS')
               CrossStub.clear
-              @get_value["#{@descriptor}.bang"]
+              @call["#{@descriptor}.bang"]
             end
           end
 
@@ -35,14 +35,14 @@ describe 'Clearing Stubs' do
             original_value = @klass.say
             @klass.xstub(:say)
             CrossStub.clear
-            @get_value["#{@descriptor}.say"].should.equal original_value
+            @call["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear symbol generated stub and raise NoMethodError" do
             should.raise(NoMethodError) do
               @klass.xstub(:bang)
               CrossStub.clear
-              @get_value["#{@descriptor}.bang"]
+              @call["#{@descriptor}.bang"]
             end
           end
 
@@ -52,7 +52,7 @@ describe 'Clearing Stubs' do
               def say ; 'HELLO' ; end
             end
             CrossStub.clear
-            @get_value["#{@descriptor}.say"].should.equal original_value
+            @call["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear block generated stub and raise NoMethodError" do
@@ -61,7 +61,7 @@ describe 'Clearing Stubs' do
                 def bang ; 'OOPS' ; end
               end
               CrossStub.clear
-              @get_value["#{@descriptor}.bang"]
+              @call["#{@descriptor}.bang"]
             end
           end
 
@@ -70,7 +70,7 @@ describe 'Clearing Stubs' do
 
             # Stub an existing method
             @klass.xstub(:say => 'HELLO')
-            @get_value["#{@descriptor}.say"]
+            @call["#{@descriptor}.say"]
 
             # Clear stubs without refreshing another process
             CrossStub.clear
@@ -78,16 +78,16 @@ describe 'Clearing Stubs' do
 
             # Stub a non-existing method
             @klass.xstub(:bang => 'OOPS')
-            @get_value["#{@descriptor}.bang"]
+            @call["#{@descriptor}.bang"]
 
             # Make sure existing method returns to original method
-            @get_value["#{@descriptor}.say"].should.equal original_value
+            @call["#{@descriptor}.say"].should.equal original_value
           end
 
           should "always clear previously generated stub and raise NoMethodError" do
             # Stub a non-existing method
             @klass.xstub(:bang => 'OOPS')
-            @get_value["#{@descriptor}.bang"]
+            @call["#{@descriptor}.bang"]
 
             # Clear stubs without refreshing another process
             CrossStub.clear
@@ -95,17 +95,17 @@ describe 'Clearing Stubs' do
 
             # Stub an existing method
             @klass.xstub(:say => 'HELLO')
-            @get_value["#{@descriptor}.say"]
+            @call["#{@descriptor}.say"]
 
             # Make sure accessing non-existing method throws error
-            should.raise(NoMethodError) { @get_value["#{@descriptor}.bang"] }
+            should.raise(NoMethodError) { @call["#{@descriptor}.bang"] }
           end
 
           should "clear for method not implemented in ruby and return original value" do
             Time.xstub(:now => 'abc')
             CrossStub.clear
             value = nil
-            should.not.raise(NoMethodError) { value = @get_value['Time.now'] }
+            should.not.raise(NoMethodError) { value = @call['Time.now'] }
             value.should.not.equal 'abc'
           end
 

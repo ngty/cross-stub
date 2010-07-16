@@ -18,43 +18,43 @@ describe 'Creating Instance Stubs' do
 
           should "create with hash argument(s)" do
             @klass.xstub({:bang => 'OOPS', :say => 'HELLO'}, :instance => true)
-            @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
-            @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+            @call["#{@descriptor}.bang"].should.equal 'OOPS'
+            @call["#{@descriptor}.say"].should.equal 'HELLO'
           end
 
           should "create with symbol argument(s)" do
             @klass.xstub(:bang, :instance => true)
-            @get_value["#{@descriptor}.bang"].should.equal nil
+            @call["#{@descriptor}.bang"].should.equal nil
           end
 
           should "create with block with no argument" do
             @klass.xstub(:instance => true) do
               def bang ; 'OOPS' ; end
             end
-            @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
+            @call["#{@descriptor}.bang"].should.equal 'OOPS'
           end
 
           should "create with symbol & block with no argument" do
             @klass.xstub(:bang, :instance => true) do
               def say ; 'HELLO' ; end
             end
-            @get_value["#{@descriptor}.bang"].should.equal nil
-            @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+            @call["#{@descriptor}.bang"].should.equal nil
+            @call["#{@descriptor}.say"].should.equal 'HELLO'
           end
 
           should "create with hash & block with no argument" do
             @klass.xstub({:bang => 'OOPS'}, :instance => true) do
               def say ; 'HELLO' ; end
             end
-            @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
-            @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+            @call["#{@descriptor}.bang"].should.equal 'OOPS'
+            @call["#{@descriptor}.say"].should.equal 'HELLO'
           end
 
           should "always create the most recent" do
             found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
             stub_and_get_value = lambda do |value|
               @klass.xstub({:bang => value}, :instance => true)
-              @get_value["#{@descriptor}.bang"]
+              @call["#{@descriptor}.bang"]
             end
 
             found << stub_and_get_value[expected[0]]
@@ -73,7 +73,7 @@ describe 'Creating Instance Stubs' do
                 %\#{who} #{action} #{something}\
               end
             end
-            @get_value["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
+            @call["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
           end
 
         end
