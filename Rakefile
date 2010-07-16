@@ -14,12 +14,14 @@ begin
     gem.add_development_dependency "eventmachine", ">= 0.0.0"
     gem.add_dependency "ruby2ruby", "= 1.2.4"
     gem.add_dependency "ruby_parser", "= 2.0.4"
+    gem.required_ruby_version = '>= 1.8.7'
     # ##
     # TODO: How do we declare the following optional dependencies ??
     # 1. gem.add_dependency "memcache-client", "= 1.8.5"
     # 2. gem.add_dependency "redis", "= 2.0.3"
     # ##
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    #
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
