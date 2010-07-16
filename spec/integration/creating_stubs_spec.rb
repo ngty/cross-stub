@@ -2,91 +2,91 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 
 describe 'Creating Stubs' do
 
-  cache_stores.keys.each do |store_type|
+  each_cache_store do |store_type|
     %w{current other}.each do |mode|
-      %w{AnyClass AnyClass::Inner AnyModule AnyModule::Inner}.each do |klass_or_module|
+      %w{AnyClass AnyModule AnyClass::Inner AnyModule::Inner}.each do |descriptor|
 
-        describe '>> %s process using :%s store (%s)' % [mode, store_type, klass_or_module] do
+          describe '>> %s process using :%s store (%s)' % [mode, store_type, descriptor] do
 
-          before do
-            @context = get_context(klass_or_module)
-            @store_type = store_type
-          end
-
-          behaves_like 'has standard setup'
-          behaves_like "has #{mode} process setup"
-
-          should "create with hash argument(s)" do
-            @context.xstub(:bang => 'OOPS', :say => 'HELLO')
-            @get_value["#{@context}.bang"].should.equal 'OOPS'
-            @get_value["#{@context}.say"].should.equal 'HELLO'
-          end
-
-          should "create with symbol argument(s)" do
-            @context.xstub(:bang)
-            @get_value["#{@context}.bang"].should.equal nil
-          end
-
-          should "create with block with no argument" do
-            @context.xstub do
-              def bang ; 'OOPS' ; end
+            before do
+              @descriptor = descriptor
+              @klass = klassify(descriptor)
+              @store_type = store_type
             end
-            @get_value["#{@context}.bang"].should.equal 'OOPS'
-          end
 
-          should "create with symbol & block with no argument" do
-            @context.xstub(:bang) do
-              def say
-                'HELLO'
+            behaves_like "has #{mode} process setup"
+
+            should "create with hash argument(s)" do
+              @klass.xstub(:bang => 'OOPS', :say => 'HELLO')
+              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
+              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
+            end
+
+            should "create with symbol argument(s)" do
+              @klass.xstub(:bang)
+              @get_value["#{@descriptor}.bang"].should.equal nil
+            end
+
+            should "create with block with no argument" do
+              @klass.xstub do
+                def bang ; 'OOPS' ; end
               end
+              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
             end
-            @get_value["#{@context}.bang"].should.equal nil
-            @get_value["#{@context}.say"].should.equal 'HELLO'
-          end
 
-          should "create with hash & block with no argument" do
-            @context.xstub(:bang => 'OOPS') do
-              def say
-                'HELLO'
+            should "create with symbol & block with no argument" do
+              @klass.xstub(:bang) do
+                def say
+                  'HELLO'
+                end
               end
-            end
-            @get_value["#{@context}.bang"].should.equal 'OOPS'
-            @get_value["#{@context}.say"].should.equal 'HELLO'
-          end
-
-          should "always create the most recent" do
-            found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
-            stub_and_get_value = lambda do |value|
-              @context.xstub(:bang => value)
-              @get_value["#{@context}.bang"]
+              @get_value["#{@descriptor}.bang"].should.equal nil
+              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
             end
 
-            found << stub_and_get_value[expected[0]]
-            found << stub_and_get_value[expected[1]]
-
-            CrossStub.clear
-            CrossStub.setup(cache_store(@store_type))
-
-            found << stub_and_get_value[expected[2]]
-            found.should.equal expected
-          end
-
-          should "create stub with dependency on other stub" do
-            @context.xstub(:something => 'HELLO') do
-              def do_action(who, action)
-                %\#{who} #{action} #{something}\
+            should "create with hash & block with no argument" do
+              @klass.xstub(:bang => 'OOPS') do
+                def say
+                  'HELLO'
+                end
               end
+              @get_value["#{@descriptor}.bang"].should.equal 'OOPS'
+              @get_value["#{@descriptor}.say"].should.equal 'HELLO'
             end
-            @get_value["#{@context}.do_action.i.say"].should.equal 'i say HELLO'
-          end
 
-          should "create for method not implemented in ruby" do
-            now = Time.now - 365*60*60*24
-            Time.xstub(:now => now)
-            @get_value['Time.now'].should.equal now
-          end
+            should "always create the most recent" do
+              found, expected = [], ['OOPS', 'OOOPS', 'OOOOPS']
+              stub_and_get_value = lambda do |value|
+                @klass.xstub(:bang => value)
+                @get_value["#{@descriptor}.bang"]
+              end
 
-        end
+              found << stub_and_get_value[expected[0]]
+              found << stub_and_get_value[expected[1]]
+
+              CrossStub.clear
+              CrossStub.setup(cache_store(@store_type))
+
+              found << stub_and_get_value[expected[2]]
+              found.should.equal expected
+            end
+
+            should "create stub with dependency on other stub" do
+              @klass.xstub(:something => 'HELLO') do
+                def do_action(who, action)
+                  %\#{who} #{action} #{something}\
+                end
+              end
+              @get_value["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
+            end
+
+            should "create for method not implemented in ruby" do
+              now = Time.now - 365*60*60*24
+              Time.xstub(:now => now)
+              @get_value['Time.now'].should.equal now
+            end
+
+          end
 
       end
     end

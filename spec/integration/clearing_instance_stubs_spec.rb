@@ -2,33 +2,33 @@ require File.join(File.dirname(__FILE__), 'shared_spec')
 
 describe 'Clearing Instance Stubs' do
 
-  cache_stores.keys.each do |store_type|
+  each_cache_store do |store_type|
     %w{current other}.each do |mode|
-      %w{AnyInstance AnyInstance::Inner}.each do |klass|
+      %w{AnyInstance#new AnyInstance::Inner#new}.each do |descriptor|
 
-        describe '>> %s process using :%s store (%s instance)' % [mode, store_type, klass] do
+        describe '>> %s process using :%s store (%s instance)' % [mode, store_type, descriptor] do
 
           before do
-            @klass = get_context(klass)
+            @descriptor = descriptor
+            @klass = klassify(descriptor)
             @instance = @klass.new
             @store_type = store_type
           end
 
-          behaves_like 'has standard setup'
           behaves_like "has #{mode} process setup"
 
           should "clear hash generated stub and return original value" do
             original_value = @instance.say
             @klass.xstub({:say => 'HELLO'}, :instance => true)
             CrossStub.clear
-            @get_value["#{@klass}#new.say"].should.equal original_value
+            @get_value["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear hash generated stub and raise NoMethodError" do
             should.raise(NoMethodError) do
               @klass.xstub({:blurb => 'blah blah'}, :instance => true)
               CrossStub.clear
-              @get_value["#{@klass}#new.blurb"]
+              @get_value["#{@descriptor}.blurb"]
             end
           end
 
@@ -36,14 +36,14 @@ describe 'Clearing Instance Stubs' do
             original_value = @instance.say
             @klass.xstub(:say, :instance => true)
             CrossStub.clear
-            @get_value["#{@klass}#new.say"].should.equal original_value
+            @get_value["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear symbol generated stub and raise NoMethodError" do
             should.raise(NoMethodError) do
               @klass.xstub(:blurb, :instance => true)
               CrossStub.clear
-              @get_value["#{@klass}#new.blurb"]
+              @get_value["#{@descriptor}.blurb"]
             end
           end
 
@@ -53,7 +53,7 @@ describe 'Clearing Instance Stubs' do
               def say ; 'HELLO' ; end
             end
             CrossStub.clear
-            @get_value["#{@klass}#new.say"].should.equal original_value
+            @get_value["#{@descriptor}.say"].should.equal original_value
           end
 
           should "clear block generated stub and raise NoMethodError" do
@@ -62,7 +62,7 @@ describe 'Clearing Instance Stubs' do
                 def blurb ; 'blah blah' ; end
               end
               CrossStub.clear
-              @get_value["#{@klass}#new.blurb"]
+              @get_value["#{@descriptor}.blurb"]
             end
           end
 
@@ -71,7 +71,7 @@ describe 'Clearing Instance Stubs' do
 
             # Stub an existing method
             @klass.xstub({:say => 'HELLO'}, :instance => true)
-            @get_value["#{@klass}#new.say"]
+            @get_value["#{@descriptor}.say"]
 
             # Clear stubs without refreshing another process
             CrossStub.clear
@@ -79,16 +79,16 @@ describe 'Clearing Instance Stubs' do
 
             # Stub a non-existing method
             @klass.xstub({:blurb => 'blah blah'}, :instance => true)
-            @get_value["#{@klass}#new.blurb"]
+            @get_value["#{@descriptor}.blurb"]
 
             # Make sure existing method returns to original method
-            @get_value["#{@klass}#new.say"].should.equal original_value
+            @get_value["#{@descriptor}.say"].should.equal original_value
           end
 
           should "always clear previously generated stub and raise NoMethodError" do
             # Stub a non-existing method
             @klass.xstub({:blurb => 'blah blah'}, :instance => true)
-            @get_value["#{@klass}#new.blurb"]
+            @get_value["#{@descriptor}.blurb"]
 
             # Clear stubs without refreshing another process
             CrossStub.clear
@@ -96,10 +96,10 @@ describe 'Clearing Instance Stubs' do
 
             # Stub an existing method
             @klass.xstub({:say => 'HELLO'}, :instance => true)
-            @get_value["#{@klass}#new.say"]
+            @get_value["#{@descriptor}.say"]
 
             # Make sure accessing non-existing method throws error
-            should.raise(NoMethodError) { @get_value["#{@klass}#new.blurb"] }
+            should.raise(NoMethodError) { @get_value["#{@descriptor}.blurb"] }
           end
 
         end
