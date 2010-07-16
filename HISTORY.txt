@@ -1,4 +1,4 @@
-=== Current
+=== 0.2.0 2010-07-16
 
 = New Features
 * added support for cross-stubbing instances [#liangzan]
