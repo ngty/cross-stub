@@ -6,9 +6,9 @@ module CrossStub
       EXIST, CODE = 0, 1
 
       extend Forwardable
-      def_delegator :@thingy, :m_eval
-      def_delegator :@thingy, :t_eval
-      def_delegator :@thingy, :has_method?
+      def_delegator :@thing, :m_eval
+      def_delegator :@thing, :t_eval
+      def_delegator :@thing, :has_method?
 
       def apply(type, thing, stubs)
         initialize_vars(type, thing, stubs)
@@ -27,8 +27,7 @@ module CrossStub
       private
 
         def initialize_vars(type, thing, stubs)
-          @thingy, @thing, @stubs = (type == :class ? Klass : Instance), thing, stubs
-          @thingy.context = @thing
+          @thing, @stubs = (type == :class ? Klass : Instance).new(thing), stubs
         end
 
         def apply_stubbing_and_return_cacheables
@@ -91,42 +90,42 @@ module CrossStub
 
     end
 
-    module Instance
-      class << self
+    class Instance
 
-        attr_writer :context
-
-        def m_eval(str)
-          @context.class_eval(str)
-        end
-
-        alias_method :t_eval, :m_eval
-
-        def has_method?(method)
-          @context.instance_methods.map(&:to_s).include?(method.to_s)
-        end
-
+      def initialize(thing)
+        @thing = thing
       end
+
+      def m_eval(str)
+        @thing.class_eval(str)
+      end
+
+      alias_method :t_eval, :m_eval
+
+      def has_method?(method)
+        @thing.instance_methods.map(&:to_s).include?(method.to_s)
+      end
+
     end
 
-    module Klass
-      class << self
+    class Klass
 
-        attr_writer :context
-
-        def m_eval(str)
-          (class << @context ; self ; end).instance_eval(str)
-        end
-
-        def t_eval(str)
-          @context.instance_eval(str)
-        end
-
-        def has_method?(method)
-          @context.respond_to?(method)
-        end
-
+      def initialize(thing)
+        @thing = thing
       end
+
+      def m_eval(str)
+        (class << @thing ; self ; end).instance_eval(str)
+      end
+
+      def t_eval(str)
+        @thing.instance_eval(str)
+      end
+
+      def has_method?(method)
+        @thing.respond_to?(method)
+      end
+
     end
 
   end
