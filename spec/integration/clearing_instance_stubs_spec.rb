@@ -102,6 +102,14 @@ describe 'Clearing Instance Stubs' do
             should.raise(NoMethodError) { @call["#{@descriptor}.blurb"] }
           end
 
+          should "clear for method not implemented in ruby and return original value" do
+            Time.xstub(:day => 99, :instance => true)
+            CrossStub.clear
+            value = nil
+            should.not.raise(NoMethodError) { value = @call['Time#new.day'] }
+            value.should.not.equal 99
+          end
+
         end
 
       end

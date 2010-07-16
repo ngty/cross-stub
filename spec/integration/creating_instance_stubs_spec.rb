@@ -76,6 +76,12 @@ describe 'Creating Instance Stubs' do
             @call["#{@descriptor}.do_action.i.say"].should.equal 'i say HELLO'
           end
 
+          should "create for method not implemented in ruby" do
+            day = 99
+            Time.xstub({:day => day}, :instance => true)
+            @call['Time#new.day'].should.equal day
+          end
+
         end
 
       end
