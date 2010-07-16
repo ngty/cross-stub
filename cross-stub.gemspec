@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cross-stub}
-  s.version = "0.1.4"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NgTzeYang"]
-  s.date = %q{2010-04-03}
+  s.date = %q{2010-07-16}
   s.description = %q{}
   s.email = %q{ngty77@gmail.com}
   s.extra_rdoc_files = [
@@ -26,31 +26,49 @@ Gem::Specification.new do |s|
      "VERSION",
      "cross-stub.gemspec",
      "lib/cross-stub.rb",
-     "lib/cross-stub/cache_helpers.rb",
-     "lib/cross-stub/pseudo_class.rb",
-     "lib/cross-stub/setup_helpers.rb",
-     "lib/cross-stub/stub_helpers.rb",
+     "lib/cross-stub/arguments.rb",
+     "lib/cross-stub/arguments/array.rb",
+     "lib/cross-stub/arguments/hash.rb",
+     "lib/cross-stub/arguments/proc.rb",
+     "lib/cross-stub/cache.rb",
+     "lib/cross-stub/stores.rb",
+     "lib/cross-stub/stores/base.rb",
+     "lib/cross-stub/stores/file.rb",
+     "lib/cross-stub/stores/memcache.rb",
+     "lib/cross-stub/stores/redis.rb",
+     "lib/cross-stub/stubber.rb",
      "rails_generators/cross_stub/cross_stub_generator.rb",
      "rails_generators/cross_stub/templates/config/initializers/cross-stub.rb",
      "rails_generators/cross_stub/templates/features/support/cross-stub.rb",
      "spec/.bacon",
-     "spec/cross-stub/clearing_stubs_spec.rb",
-     "spec/cross-stub/creating_stubs_spec.rb",
-     "spec/cross-stub/stubbing_error_spec.rb",
-     "spec/helpers.rb",
+     "spec/arguments/proc_spec.rb",
+     "spec/includes.rb",
+     "spec/integration/clearing_instance_stubs_spec.rb",
+     "spec/integration/clearing_stubs_spec.rb",
+     "spec/integration/creating_instance_stubs_spec.rb",
+     "spec/integration/creating_stubs_spec.rb",
+     "spec/integration/shared_spec.rb",
+     "spec/integration/stubbing_error_spec.rb",
+     "spec/service.rb",
      "spec/spec_helper.rb",
      "tmp/.dummy"
   ]
   s.homepage = %q{http://github.com/ngty/cross-stub}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.required_ruby_version = Gem::Requirement.new(">= 1.8.7")
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Simple cross process stubbing}
   s.test_files = [
-    "spec/helpers.rb",
-     "spec/cross-stub/stubbing_error_spec.rb",
-     "spec/cross-stub/clearing_stubs_spec.rb",
-     "spec/cross-stub/creating_stubs_spec.rb",
+    "spec/includes.rb",
+     "spec/arguments/proc_spec.rb",
+     "spec/service.rb",
+     "spec/integration/stubbing_error_spec.rb",
+     "spec/integration/creating_instance_stubs_spec.rb",
+     "spec/integration/shared_spec.rb",
+     "spec/integration/clearing_stubs_spec.rb",
+     "spec/integration/creating_stubs_spec.rb",
+     "spec/integration/clearing_instance_stubs_spec.rb",
      "spec/spec_helper.rb"
   ]
 
@@ -58,22 +76,22 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<bacon>, [">= 0.0.0"])
       s.add_development_dependency(%q<eventmachine>, [">= 0.0.0"])
-      s.add_runtime_dependency(%q<ParseTree>, ["= 3.0.4"])
       s.add_runtime_dependency(%q<ruby2ruby>, ["= 1.2.4"])
+      s.add_runtime_dependency(%q<ruby_parser>, ["= 2.0.4"])
     else
       s.add_dependency(%q<bacon>, [">= 0.0.0"])
       s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
-      s.add_dependency(%q<ParseTree>, ["= 3.0.4"])
       s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
+      s.add_dependency(%q<ruby_parser>, ["= 2.0.4"])
     end
   else
     s.add_dependency(%q<bacon>, [">= 0.0.0"])
     s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
-    s.add_dependency(%q<ParseTree>, ["= 3.0.4"])
     s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
+    s.add_dependency(%q<ruby_parser>, ["= 2.0.4"])
   end
 end
 
