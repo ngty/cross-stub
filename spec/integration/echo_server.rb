@@ -98,7 +98,8 @@ module EchoServer
         log "(1) EchoServer::EM#receive_data ... receives: #{store_type_and_klass_and_method}"
 
         store_type, klass_and_method = store_type_and_klass_and_method.match(/^(.*?)\/(.*)$/)[1..2]
-        CrossStub.refresh(cache_store(store_type))
+        CrossStub.refresh(cache_store($prev_store_type)) if $prev_store_type
+        CrossStub.refresh(cache_store($prev_store_type = store_type))
         log "(2) EchoServer::EM#receive_data ... completes stubs refresh"
 
         klass_descrp, method, *args = klass_and_method.split('.')
