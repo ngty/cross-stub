@@ -11,7 +11,7 @@ begin
     gem.homepage = "http://github.com/ngty/cross-stub"
     gem.authors = ["NgTzeYang"]
     gem.add_development_dependency "bacon", ">= 0.0.0"
-    gem.add_development_dependency "eventmachine", ">= 0.0.0"
+    gem.add_development_dependency "otaku", ">= 0.2.1"
     gem.add_dependency "ruby2ruby", "= 1.2.4"
     gem.add_dependency "ruby_parser", "= 2.0.4"
     gem.required_ruby_version = '>= 1.8.7'

@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 require File.join(File.dirname(__FILE__), '..', 'includes')
-require File.join(File.dirname(__FILE__), '..', 'service')
 
 shared 'has standard setup' do
   before { CrossStub.setup(cache_store(@store_type)) }
@@ -17,19 +16,24 @@ shared 'has other process setup' do
   behaves_like 'has standard setup'
 
   before do
-    @call = lambda do |klass_and_method_and_args|
-      do_remote_method_call("%s/%s" % [@store_type, klass_and_method_and_args])
+    @call = lambda do |method_call_args|
+      do_remote_method_call("%s/%s" % [@store_type, method_call_args])
     end
     $service_started ||= (
-      EchoServer.start if ENV['ECHO_SERVER'] != 'false'
-      true
+      ENV['FORK_SERVER'] != 'false' && (
+        Otaku.start do |data|
+          require File.join(File.dirname(__FILE__), '..', 'includes')
+          store_type, method_call_args = data.match(/^(.*?)\/(.*)$/)[1..2]
+          CrossStub.refresh(cache_store($prev_store_type)) if $prev_store_type
+          CrossStub.refresh(cache_store($prev_store_type = store_type))
+          do_local_method_call(method_call_args) rescue $!.message
+        end
+      ) ; true
     )
   end
 
 end
 
 at_exit do
-  $service_started && (
-    EchoServer.stop unless ENV['ECHO_SERVER'] == 'false'
-  )
+  ENV['FORK_SERVER'] != 'false' && $service_started && Otaku.stop
 end

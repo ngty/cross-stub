@@ -10,7 +10,7 @@ RUBY_VM = [
   RUBY_DESCRIPTION =~ /enterprise/i ? 'e' : ''
 ].join
 
-PROJECT_ROOT = File.join(File.dirname(__FILE__), '..')
+PROJECT_ROOT = File.join(File.dirname(File.expand_path(__FILE__)), '..')
 PROJECT_FILE = lambda{|*args| File.join(*[PROJECT_ROOT, *args]) }
 
 CACHE_STORES = {
@@ -19,10 +19,17 @@ CACHE_STORES = {
   :redis => "localhost:6379/stubbing-#{RUBY_VM}.cache",
 }
 
-ECHO_SERVER_INIT_WAIT_TIME = RUBY_VM.end_with?('j') ? 10 : 2
-ECHO_SERVER_LOG = PROJECT_FILE['tmp', "echoserver-#{RUBY_VM}.log"]
-ECHO_SERVER_HOST = '127.0.0.1'
-ECHO_SERVER_PORT = 10000 + RUBY_VM[/(\d+)/,1].to_i + ({'j' => 7, 'e' => 17}[RUBY_VM[-1..-1]] || 0)
+# /////////////////////////////////////////////////////////////////////////////////////////
+# Configuring otaku service
+# /////////////////////////////////////////////////////////////////////////////////////////
+
+
+require 'otaku'
+Otaku.configure do |config|
+  config.log_file = PROJECT_FILE['tmp', "otaku-#{RUBY_VM}.log"]
+  config.address = '127.0.0.1'
+  config.port = 10000 + RUBY_VM[/(\d+)/,1].to_i + ({'j' => 7, 'e' => 17}[RUBY_VM[-1..-1]] || 0)
+end
 
 # /////////////////////////////////////////////////////////////////////////////////////////
 # Useful methods
@@ -51,7 +58,7 @@ def parse_call_args(klass_and_method_and_args)
 end
 
 def do_remote_method_call(store_type_and_klass_and_method_and_args)
-  (value = EchoClient.get(store_type_and_klass_and_method_and_args)) !~ /^undefined method/ ?
+  (value = Otaku.process(store_type_and_klass_and_method_and_args)) !~ /^undefined method/ ?
     value : Object.we_just_wanna_trigger_no_method_error_with_this_weird_method!
 end
 
