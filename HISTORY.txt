@@ -1,3 +1,9 @@
+=== Current
+
+= House-Keeping
+
+* use Otaku instead of customized EchoServer [#ngty]
+
 === 0.2.0 2010-07-16
 
 = New Features
