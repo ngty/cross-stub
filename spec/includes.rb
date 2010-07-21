@@ -23,12 +23,9 @@ CACHE_STORES = {
 # Configuring otaku service
 # /////////////////////////////////////////////////////////////////////////////////////////
 
-
-require 'otaku'
+require 'otaku' unless Object.const_defined?('Otaku')
 Otaku.configure do |config|
   config.log_file = PROJECT_FILE['tmp', "otaku-#{RUBY_VM}.log"]
-  config.address = '127.0.0.1'
-  config.port = 10000 + RUBY_VM[/(\d+)/,1].to_i + ({'j' => 7, 'e' => 17}[RUBY_VM[-1..-1]] || 0)
 end
 
 # /////////////////////////////////////////////////////////////////////////////////////////
