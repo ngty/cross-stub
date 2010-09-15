@@ -1,4 +1,4 @@
-=== Current
+=== 0.2.1 2010-09-16
 
 = House-Keeping
 * use sourcify to extract proc code, instead of handrolled solution [#ngty]

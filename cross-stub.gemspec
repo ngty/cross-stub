@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cross-stub}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NgTzeYang"]
-  s.date = %q{2010-07-16}
+  s.date = %q{2010-09-15}
   s.description = %q{}
   s.email = %q{ngty77@gmail.com}
   s.extra_rdoc_files = [
@@ -41,7 +41,6 @@ Gem::Specification.new do |s|
      "rails_generators/cross_stub/templates/config/initializers/cross-stub.rb",
      "rails_generators/cross_stub/templates/features/support/cross-stub.rb",
      "spec/.bacon",
-     "spec/arguments/proc_spec.rb",
      "spec/includes.rb",
      "spec/integration/clearing_instance_stubs_spec.rb",
      "spec/integration/clearing_stubs_spec.rb",
@@ -61,7 +60,6 @@ Gem::Specification.new do |s|
   s.summary = %q{Simple cross process stubbing}
   s.test_files = [
     "spec/includes.rb",
-     "spec/arguments/proc_spec.rb",
      "spec/service.rb",
      "spec/integration/stubbing_error_spec.rb",
      "spec/integration/creating_instance_stubs_spec.rb",
@@ -78,20 +76,23 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<bacon>, [">= 0.0.0"])
-      s.add_development_dependency(%q<eventmachine>, [">= 0.0.0"])
-      s.add_runtime_dependency(%q<ruby2ruby>, ["= 1.2.4"])
-      s.add_runtime_dependency(%q<ruby_parser>, ["= 2.0.4"])
+      s.add_development_dependency(%q<otaku>, [">= 0.4.0"])
+      s.add_runtime_dependency(%q<ruby2ruby>, [">= 1.2.5"])
+      s.add_runtime_dependency(%q<sexp_processor>, [">= 3.0.5"])
+      s.add_runtime_dependency(%q<sourcify>, [">= 0.2.3"])
     else
       s.add_dependency(%q<bacon>, [">= 0.0.0"])
-      s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
-      s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
-      s.add_dependency(%q<ruby_parser>, ["= 2.0.4"])
+      s.add_dependency(%q<otaku>, [">= 0.4.0"])
+      s.add_dependency(%q<ruby2ruby>, [">= 1.2.5"])
+      s.add_dependency(%q<sexp_processor>, [">= 3.0.5"])
+      s.add_dependency(%q<sourcify>, [">= 0.2.3"])
     end
   else
     s.add_dependency(%q<bacon>, [">= 0.0.0"])
-    s.add_dependency(%q<eventmachine>, [">= 0.0.0"])
-    s.add_dependency(%q<ruby2ruby>, ["= 1.2.4"])
-    s.add_dependency(%q<ruby_parser>, ["= 2.0.4"])
+    s.add_dependency(%q<otaku>, [">= 0.4.0"])
+    s.add_dependency(%q<ruby2ruby>, [">= 1.2.5"])
+    s.add_dependency(%q<sexp_processor>, [">= 3.0.5"])
+    s.add_dependency(%q<sourcify>, [">= 0.2.3"])
   end
 end
 
