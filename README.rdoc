@@ -2,15 +2,21 @@
 
 == Introduction
 
-Existing mocking/stubbing frameworks support only stubbing in the current process. This is OK most of the time. However, when running cucumber integration test suite in another process, these in-process stubbing frameworks simply doesn't help. Eg. I want Time.now to always return a timing that should be a Sunday, how do I do that when running cucumber using selenium, culerity, steam, blah, blah driver? It doesn't seem straight-forward me.
+Existing mocking/stubbing frameworks support only stubbing in the current process.
+This is OK most of the time. However, when running cucumber integration test suite
+in another process, these in-process stubbing frameworks simply doesn't help. Eg.
+I want Time.now to always return a timing that should be a Sunday, how do I do that
+when running cucumber using selenium, culerity, steam, blah, blah driver? It doesn't
+seem straight-forward me.
 
-(Let's not argue whether stubbing should be encouraged. It is an itch, the poor itch needs to be scratched.)
+(Let's not argue whether stubbing should be encouraged. It is an itch, the poor itch
+needs to be scratched.)
 
 == Getting Started
 
 It's hosted on gemcutter.org.
 
-  $ sudo gem install cross-stub
+  $ gem install cross-stub
 
 == Setting Up
 
@@ -31,7 +37,8 @@ It's hosted on gemcutter.org.
   # point where all request handling starts:
   CrossStub.refresh :file => <CACHE_FILE>
 
-For a full list of available cache stores, scroll down to take a look at the 'Cache Stores' section.
+For a full list of available cache stores, scroll down to take a look at the
+'Cache Stores' section.
 
 == Using It
 
@@ -83,8 +90,6 @@ Cross-stubbing is simple:
 
   Someone.new.say('HELLO') # yields: 'saying "HELLO"'
 
-IMPORTANT: Since switching from ParseTree to RubyParser, dynamic code analysis is no longer possible. When defining methods in the proc, fanciful coding is strongly discouraged, pls follow the conservative style suggested above.
-
 === #3. Something more complicated:
 
   something = 'hello'
@@ -96,7 +101,8 @@ IMPORTANT: Since switching from ParseTree to RubyParser, dynamic code analysis i
 
   Someone.say # failure !!
 
-The above fails as a result of undefined variable/method 'something', to workaround we can have:
+The above fails as a result of undefined variable/method 'something', to workaround
+we can have:
 
   Someone.xstub(:something => 'HELLO') do
     def say
@@ -108,7 +114,8 @@ The above fails as a result of undefined variable/method 'something', to workaro
 
 == Cache Stores
 
-Cache stores are needed to allow stubs to be made available for different processes. The following describes all cache stores available:
+Cache stores are needed to allow stubs to be made available for different processes.
+The following describes all cache stores available:
 
 === #1. File
 
@@ -134,17 +141,22 @@ Cache stores are needed to allow stubs to be made available for different proces
   # Refreshing (other process)
   CrossStub.refresh :redis => 'localhost:6379/<CACHE_ID>'
 
-Adding new store is super easy (w.r.t testing & actual implementation), let me know if u need more :]
+Adding new store is super easy (w.r.t testing & actual implementation), let me know
+if u need more :]
 
 == Caveats
 
-#1. Cross-stub uses ruby's Marshal class to dump & load the stubs, thus it has the same limitations as Marshal
+#1. CrossStub uses ruby's Marshal class to dump & load the stubs, thus it has the
+    same limitations as Marshal (pls note abt a 1.9.1 specific marshal bug at
+    http://redmine.ruby-lang.org/issues/show/3729)
 
-#2. Having switched from ParseTree to RubyParser, dynamic code analysis is no longer available, the proc taken by xstub no longer supports fanciful coding, pls follow the conservative style suggested in this README.
+#2. Under the hood, CrossStub uses Sourcify (http://github.com/ngty/sourcify) for
+    extracting the methods defined within the proc, u may wish to read Sourcify's
+    gotchas to avoid unnecessary headaches.
 
 == TODO(s)
 
-#1. We can possibly use Hijack (http://github.com/ileitch/hijack) within the current test process to trigger refreshing of stubs in the other process, thus using cross-stub no longer requires changing of any existing application code to insert CrossStub.refresh(...). This has in fact been our original intended strategy, however, we have not been able to do so as Hijack currently hangs on starting up on our development machines.
+#1. Is there any better serialization strategy instead of the current Marshal load/dump?
 
 == Contacts
 
