@@ -1,8 +1,10 @@
 require 'rubygems'
 require 'base64'
 require 'ruby2ruby'
-require 'ruby_parser'
+require 'sexp_processor'
+require 'sourcify'
 require 'forwardable'
+
 require 'cross-stub/cache'
 require 'cross-stub/stubber'
 require 'cross-stub/arguments'
