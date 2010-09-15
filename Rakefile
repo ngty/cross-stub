@@ -4,6 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.name = "cross-stub"
     gem.summary = %Q{Simple cross process stubbing}
     gem.description = %Q{}
@@ -11,17 +12,14 @@ begin
     gem.homepage = "http://github.com/ngty/cross-stub"
     gem.authors = ["NgTzeYang"]
     gem.add_development_dependency "bacon", ">= 0.0.0"
-    gem.add_development_dependency "otaku", ">= 0.2.2"
-    gem.add_dependency "ruby2ruby", "= 1.2.4"
-    gem.add_dependency "ruby_parser", "= 2.0.4"
+    gem.add_development_dependency "otaku", ">= 0.4.0"
+    gem.add_dependency "ruby2ruby", ">= 1.2.5"
+    gem.add_dependency "sexp_processor", ">= 3.0.5"
+    gem.add_dependency "sourcify", ">= 0.2.2.1"
     gem.required_ruby_version = '>= 1.8.7'
-    # ##
     # TODO: How do we declare the following optional dependencies ??
     # 1. gem.add_dependency "memcache-client", "= 1.8.5"
     # 2. gem.add_dependency "redis", "= 2.0.3"
-    # ##
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-    #
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
