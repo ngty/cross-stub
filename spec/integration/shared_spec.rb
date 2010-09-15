@@ -22,6 +22,7 @@ shared 'has other process setup' do
     $service_started ||= (
       ENV['FORK_SERVER'] != 'false' && (
         Otaku.start do |data|
+          @@_not_isolated_vars = :all # we don't wanna isolate any contextual references
           require File.join(File.dirname(__FILE__), '..', 'includes')
           store_type, method_call_args = data.match(/^(.*?)\/(.*)$/)[1..2]
           CrossStub.refresh(cache_store($prev_store_type)) if $prev_store_type
