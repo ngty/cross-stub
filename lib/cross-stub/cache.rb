@@ -21,7 +21,7 @@ module CrossStub
       private
 
         def init(opts, truncate)
-          type, arg = opts.to_a[0].map(&:to_s)
+          type, arg = opts.to_a[0].map{|o| o.to_s }
           @store =
             begin
               store_name = '%s%s' % [type[0..0].upcase, type[1..-1].downcase]

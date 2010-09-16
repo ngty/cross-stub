@@ -16,7 +16,7 @@ begin
     gem.add_dependency "ruby2ruby", ">= 1.2.5"
     gem.add_dependency "sexp_processor", ">= 3.0.5"
     gem.add_dependency "sourcify", ">= 0.2.3"
-    gem.required_ruby_version = '>= 1.8.7'
+    gem.required_ruby_version = '>= 1.8.6'
     # TODO: How do we declare the following optional dependencies ??
     # 1. gem.add_dependency "memcache-client", "= 1.8.5"
     # 2. gem.add_dependency "redis", "= 2.0.3"

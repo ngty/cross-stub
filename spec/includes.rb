@@ -7,7 +7,7 @@ unless Object.const_defined?(:RUBY_VM)
 RUBY_VM = [
   RUBY_VERSION.gsub(/[^\d]/,''),
   RUBY_PLATFORM =~ /java/i ? 'j' : '',
-  RUBY_DESCRIPTION =~ /enterprise/i ? 'e' : ''
+  (Object.const_defined?(:RUBY_DESCRIPTION) ? RUBY_DESCRIPTION : '') =~ /enterprise/i ? 'e' : ''
 ].join
 
 PROJECT_ROOT = File.join(File.dirname(File.expand_path(__FILE__)), '..')

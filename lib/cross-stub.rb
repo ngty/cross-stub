@@ -9,6 +9,7 @@ require 'cross-stub/cache'
 require 'cross-stub/stubber'
 require 'cross-stub/arguments'
 require 'cross-stub/stores'
+require 'cross-stub/fixes'
 
 module CrossStub
 
