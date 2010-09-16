@@ -147,12 +147,12 @@ if u need more :]
 == Caveats
 
 #1. CrossStub uses ruby's Marshal class to dump & load the stubs, thus it has the
-    same limitations as Marshal (pls note abt a 1.9.1 specific marshal bug at
-    http://redmine.ruby-lang.org/issues/show/3729)
+same limitations as Marshal (pls note abt a 1.9.1 specific marshal bug at
+http://redmine.ruby-lang.org/issues/show/3729)
 
 #2. Under the hood, CrossStub uses Sourcify (http://github.com/ngty/sourcify) for
-    extracting the methods defined within the proc, u may wish to read Sourcify's
-    gotchas to avoid unnecessary headaches.
+extracting the methods defined within the proc, u may wish to read Sourcify's
+gotchas to avoid unnecessary headaches.
 
 == TODO(s)
 
