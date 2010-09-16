@@ -1,3 +1,8 @@
+=== 0.2.2 (Sep 16, 2010)
+
+= Bugfixes
+* fixed incompatibilities with 1.8.6, MRI-1.8.6 is now officially supported [#ngty]
+
 === 0.2.1 (Sep 16, 2010)
 
 = House-Keeping

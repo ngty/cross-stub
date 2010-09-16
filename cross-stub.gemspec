@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cross-stub}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NgTzeYang"]
-  s.date = %q{2010-09-15}
+  s.date = %q{2010-09-16}
   s.description = %q{}
   s.email = %q{ngty77@gmail.com}
   s.extra_rdoc_files = [
@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
      "lib/cross-stub/arguments/hash.rb",
      "lib/cross-stub/arguments/proc.rb",
      "lib/cross-stub/cache.rb",
+     "lib/cross-stub/fixes.rb",
      "lib/cross-stub/stores.rb",
      "lib/cross-stub/stores/base.rb",
      "lib/cross-stub/stores/file.rb",
@@ -55,7 +56,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/ngty/cross-stub}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.required_ruby_version = Gem::Requirement.new(">= 1.8.7")
+  s.required_ruby_version = Gem::Requirement.new(">= 1.8.6")
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Simple cross process stubbing}
   s.test_files = [
