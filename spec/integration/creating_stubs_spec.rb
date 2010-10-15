@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'shared_spec')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'shared_spec')
 
 describe 'Creating Stubs' do
 
