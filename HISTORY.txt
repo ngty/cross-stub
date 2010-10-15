@@ -1,3 +1,8 @@
+=== Current
+
+* adds official support for MRI-1.9.2 [#ngty]
+* more accurate extracting of proc code (with the latest sourcify release) [#ngty]
+
 === 0.2.2 (Sep 16, 2010)
 
 = Bugfixes
