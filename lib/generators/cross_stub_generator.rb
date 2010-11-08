@@ -1,17 +1,9 @@
-class CrossStubGenerator < Rails::Generator::Base
+class CrossStubGenerator < Rails::Generators::Base
+  source_root File.expand_path("../templates", __FILE__)
 
-  def manifest
-    record do |m|
-      m.file 'config/initializers/cross-stub.rb', 'config/initializers/cross-stub.rb'
-      m.file 'features/support/cross-stub.rb', 'features/support/cross-stub.rb'
-      m.gsub_file 'config/environments/cucumber.rb', /\z/, "config.gem 'cross-stub', :version => '>=0.2.0'\n"
-    end
+  def install_cross_stub
+    copy_file 'config/initializers/cross-stub.rb', 'config/initializers/cross-stub.rb'
+    copy_file 'features/support/cross-stub.rb', 'features/support/cross-stub.rb'
+    gsub_file 'config/environments/cucumber.rb', /\z/, "config.gem 'cross-stub', :version => '>=0.2.0'\n"
   end
-
-protected
-
-  def banner
-    "Usage: #{$0} cross_stub"
-  end
-
 end
