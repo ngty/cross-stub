@@ -22,8 +22,8 @@ It's hosted on gemcutter.org.
 
 === #1. Rails:
 
-  $ ./script/generate cucumber
-  $ ./script/generate cross_stub
+  $ rails generate cucumber
+  $ rails generate cross_stub
 
 === #2. Others (back to basics):
 
