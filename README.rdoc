@@ -20,12 +20,12 @@ It's hosted on gemcutter.org.
 
 == Setting Up
 
-=== #1. Rails:
+=== 1. Rails:
 
   $ rails generate cucumber
   $ rails generate cross_stub
 
-=== #2. Others (back to basics):
+=== 2. Others (back to basics):
 
   # In the test setup method:
   CrossStub.setup :file => <CACHE_FILE>
@@ -44,9 +44,9 @@ For a full list of available cache stores, scroll down to take a look at the
 
 Cross-stubbing is simple:
 
-=== #1. Simple returning of nil or non-nil value:
+=== 1. Simple returning of nil or non-nil value:
 
-==== #1.1. Class method:
+==== 1.1. Class method:
 
   class Someone
     def self.say
@@ -60,7 +60,7 @@ Cross-stubbing is simple:
   Someone.xstub(:say => 'HELLO')
   Someone.say # yields: 'HELLO'
 
-==== #1.2. Instance method:
+==== 1.2. Instance method:
 
   Someone.xstub(:say, :instance => true)
   Someone.new.say # yields: nil
@@ -68,9 +68,9 @@ Cross-stubbing is simple:
   Someone.xstub({:say => 'HELLO'}, :instance => true)
   Someone.new.say # yields: 'HELLO'
 
-=== #2. If a stubbed method requires argument, pass xstub a proc:
+=== 2. If a stubbed method requires argument, pass xstub a proc:
 
-==== #2.1. Class method:
+==== 2.1. Class method:
 
   Someone.xstub do
     def say(something)
@@ -80,7 +80,7 @@ Cross-stubbing is simple:
 
   Someone.say('HELLO') # yields: 'saying "HELLO"'
 
-==== #2.2. Instance method:
+==== 2.2. Instance method:
 
   Someone.xstub(:instance => true) do
     def say(something)
@@ -90,7 +90,7 @@ Cross-stubbing is simple:
 
   Someone.new.say('HELLO') # yields: 'saying "HELLO"'
 
-=== #3. Something more complicated:
+=== 3. Something more complicated:
 
   something = 'hello'
   Someone.xstub do
@@ -117,7 +117,7 @@ we can have:
 Cache stores are needed to allow stubs to be made available for different processes.
 The following describes all cache stores available:
 
-=== #1. File
+=== 1. File
 
   # Setting up (current process)
   CrossStub.setup :file => '<CACHE_FILE>'
@@ -125,7 +125,7 @@ The following describes all cache stores available:
   # Refreshing (other process)
   CrossStub.refresh :file => '<CACHE_FILE>'
 
-=== #2. Memcache (requires memcache-client gem)
+=== 2. Memcache (requires memcache-client gem)
 
   # Setting up (current process)
   CrossStub.setup :memcache => 'localhost:11211/<CACHE_ID>'
@@ -133,7 +133,7 @@ The following describes all cache stores available:
   # Refreshing (other process)
   CrossStub.refresh :memcache => 'localhost:11211/<CACHE_ID>'
 
-=== #3. Redis (requires redis gem)
+=== 3. Redis (requires redis gem)
 
   # Setting up (current process)
   CrossStub.setup :redis => 'localhost:6379/<CACHE_ID>'
@@ -146,24 +146,24 @@ if u need more :]
 
 == Caveats
 
-#1. CrossStub uses ruby's Marshal class to dump & load the stubs, thus it has the
+1. CrossStub uses ruby's Marshal class to dump & load the stubs, thus it has the
 same limitations as Marshal (pls note abt a 1.9.1 specific marshal bug at
 http://redmine.ruby-lang.org/issues/show/3729)
 
-#2. Under the hood, CrossStub uses Sourcify (http://github.com/ngty/sourcify) for
+2. Under the hood, CrossStub uses Sourcify (http://github.com/ngty/sourcify) for
 extracting the methods defined within the proc, u may wish to read Sourcify's
 gotchas to avoid unnecessary headaches.
 
 == TODO(s)
 
-#1. Is there any better serialization strategy instead of the current Marshal load/dump?
+1. Is there any better serialization strategy instead of the current Marshal load/dump?
 
 == Contacts
 
 Written since 2009 by:
 
-#1. NgTzeYang, contact ngty77[at]gmail[dot]com or http://github.com/ngty
+1. NgTzeYang, contact ngty77[at]gmail[dot]com or http://github.com/ngty
 
-#2. WongLiangZan, contact liangzan[at]gmail[dot]com or http://github.com/liangzan
+2. WongLiangZan, contact liangzan[at]gmail[dot]com or http://github.com/liangzan
 
 Released under the MIT license
