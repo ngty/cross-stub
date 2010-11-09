@@ -9,7 +9,7 @@ Before do
   # /////////////////////////////////////////////////////////////////////////////////
   #CrossStub.setup :redis => 'localhost:6379/xstub.cache' # requires *redis* gem
   #CrossStub.setup :memcache => 'localhost:11211/xstub.cache' # requires *memcache-client* gem
-  CrossStub.setup :file => File.join(RAILS_ROOT, 'tmp', 'xstub.cache')
+  CrossStub.setup :file => Rails.root.join('tmp', 'xstub.cache')
 end
 
 After do
