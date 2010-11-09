@@ -1,3 +1,7 @@
+=== 0.2.4 (9th Nov, 2010)
+
+* adds generator for rails-3.* [#liangzan]
+
 === 0.2.3 (Oct 16, 2010)
 
 * adds official support for MRI-1.9.2 [#ngty]

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cross-stub}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NgTzeYang"]
-  s.date = %q{2010-10-16}
+  s.date = %q{2010-11-09}
   s.description = %q{}
   s.email = %q{ngty77@gmail.com}
   s.extra_rdoc_files = [
@@ -26,6 +26,9 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "cross-stub.gemspec",
+     "generators/cross_stub/cross_stub_generator.rb",
+     "generators/cross_stub/templates/config/initializers/cross-stub.rb",
+     "generators/cross_stub/templates/features/support/cross-stub.rb",
      "lib/cross-stub.rb",
      "lib/cross-stub/arguments.rb",
      "lib/cross-stub/arguments/array.rb",
@@ -39,9 +42,9 @@ Gem::Specification.new do |s|
      "lib/cross-stub/stores/memcache.rb",
      "lib/cross-stub/stores/redis.rb",
      "lib/cross-stub/stubber.rb",
-     "rails_generators/cross_stub/cross_stub_generator.rb",
-     "rails_generators/cross_stub/templates/config/initializers/cross-stub.rb",
-     "rails_generators/cross_stub/templates/features/support/cross-stub.rb",
+     "lib/generators/cross_stub/cross_stub_generator.rb",
+     "lib/generators/cross_stub/templates/config/initializers/cross-stub.rb",
+     "lib/generators/cross_stub/templates/features/support/cross-stub.rb",
      "spec/.bacon",
      "spec/includes.rb",
      "spec/integration/clearing_instance_stubs_spec.rb",
