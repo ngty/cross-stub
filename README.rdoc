@@ -20,12 +20,17 @@ It's hosted on gemcutter.org.
 
 == Setting Up
 
-=== 1. Rails:
+=== 1. Rails-3.*
 
-  $ rails generate cucumber
-  $ rails generate cross_stub
+  $ rails g cucumber:install
+  $ rails g cross_stub
 
-=== 2. Others (back to basics):
+=== 2. Rails-2.*
+
+  $ ./script/generate cucumber
+  $ ./script/generate cross_stub
+
+=== 3. Others (back to basics)
 
   # In the test setup method:
   CrossStub.setup :file => <CACHE_FILE>
