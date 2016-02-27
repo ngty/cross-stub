@@ -1,5 +1,7 @@
 = CROSS-STUB makes cross process stubbing possible !!
 
+== IMPORTANT#1: CrossStub is no longer maintained, use it at your own risk, & expect no bug fixes.
+
 == Introduction
 
 Existing mocking/stubbing frameworks support only stubbing in the current process.
