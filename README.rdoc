@@ -1,6 +1,6 @@
 = CROSS-STUB makes cross process stubbing possible !!
 
-== IMPORTANT#1: CrossStub is no longer maintained, use it at your own risk, & expect no bug fixes.
+== IMPORTANT: CrossStub is no longer maintained, use it at your own risk, & expect no bug fixes.
 
 == Introduction
 
